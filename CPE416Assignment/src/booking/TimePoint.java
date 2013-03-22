@@ -99,13 +99,13 @@ public class TimePoint {
 	
 	public static void main(String [] args) {
 		
-		TimePoint tp1 = new TimePoint(TimePoint.MONDAY, 14, 59);
-		Duration dr = new Duration(0, 0, 1);
-		TimePoint tp2 = new TimePoint(tp1, dr);
-		System.out.println(tp2.toString());
-		System.out.println(tp1.compareTime(new TimePoint(TimePoint.MONDAY, 15,0)));
-		BookingSlot slot = new BookingSlot(tp1, dr);
-		System.out.println(slot.toString()); 
+//		TimePoint tp1 = new TimePoint(TimePoint.MONDAY, 14, 59);
+//		Duration dr = new Duration(0, 0, 1);
+//		TimePoint tp2 = new TimePoint(tp1, dr);
+//		System.out.println(tp2.toString());
+//		System.out.println(tp1.compareTime(new TimePoint(TimePoint.MONDAY, 15,0)));
+//		BookingSlot slot = new BookingSlot(tp1, dr);
+		System.out.println("HI"); 
 	}
 }
 
