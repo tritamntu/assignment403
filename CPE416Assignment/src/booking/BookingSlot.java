@@ -6,7 +6,7 @@ public class BookingSlot {
 	
 	public BookingSlot(TimePoint tp, Duration dr) {
 		startTime = new TimePoint(tp.getDate(), tp.getHour(), tp.getMin());
-		interval = new Duration(dr.getDay(), dr.getHour());
+		interval = new Duration(dr.getDay(), dr.getHour(), dr.getMin());
 	}
 	
 	public int compareTime(TimePoint tp) {
@@ -21,7 +21,9 @@ public class BookingSlot {
 	// get and set method
 	public String toString() {
 		String printStr = "Start at: " + this.startTime.toString() + "\n";
-		printStr += "Duration: " + this.interval.getDay() + " day(s), " + this.interval.getHour() + " hour(s).";
+		printStr += "Duration: " + this.interval.getDay() + " day(s), " 
+		         + this.interval.getHour() + " hour(s),"
+		         + this.interval.getMin() + " min(s)";
 		return printStr;
 	}
 	
@@ -48,5 +50,9 @@ public class BookingSlot {
 	
 	public int getIntervalHour() {
 		return this.interval.getHour();
+	}
+	
+	public int getIntervalMin() {
+		return this.interval.getMin();
 	}
 }

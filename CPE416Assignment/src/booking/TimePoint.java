@@ -21,24 +21,21 @@ public class TimePoint {
 	}
 	
 	public TimePoint(TimePoint tPoint, Duration interval) {
-		if(tPoint.getDate() + interval.getDay() >= TimePoint.SUNDAY) {
-			this.date = TimePoint .SUNDAY;
-			if(tPoint.getHour() + interval.getHour() <24) {
-				this.hour = tPoint.getHour() + interval.getHour();
-				this.min = tPoint.min;
-			}
-			else {
-				this.hour = 24;
-				this.min = 0;
-			}
-		} else {
-			this.date = tPoint.getDate() + interval.getDay();
-			this.hour = tPoint.getHour() + interval.getHour();
-			if(this.hour >= 24) {
-				this.hour -= 24;
-				this.date++;
-			}
-			this.min = tPoint.min;
+		this.date = tPoint.getDate() + interval.getDay();
+		this.hour = tPoint.getHour() + interval.getHour();
+		this.min = tPoint.getMin() + interval.getMin();
+		if(this.min >= 60) {
+			this.min -= 60;
+			this.hour++;
+		}
+		if(this.hour > 24) {
+			this.hour -= 24;
+			this.date++;
+		}
+		if(this.date > TimePoint.SUNDAY) {
+			this.date = TimePoint.SUNDAY;
+			this.hour = 24;
+			this.min = 0;
 		}
 	}
 	
@@ -101,12 +98,14 @@ public class TimePoint {
 	}
 	
 	public static void main(String [] args) {
+		
 		TimePoint tp1 = new TimePoint(TimePoint.MONDAY, 14, 59);
-		Duration dr = new Duration(5, 14);
+		Duration dr = new Duration(0, 0, 1);
 		TimePoint tp2 = new TimePoint(tp1, dr);
+		System.out.println(tp2.toString());
 		System.out.println(tp1.compareTime(new TimePoint(TimePoint.MONDAY, 15,0)));
 		BookingSlot slot = new BookingSlot(tp1, dr);
-		System.out.println(slot.toString());
+		System.out.println(slot.toString()); 
 	}
 }
 

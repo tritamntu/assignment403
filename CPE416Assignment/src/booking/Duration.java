@@ -3,10 +3,12 @@ package booking;
 public class Duration {
 	private int day;
 	private int hour;
+	private int min; 
 	
-	public Duration(int day, int hour) {
+	public Duration(int day, int hour, int min) {
 		this.day = day;
 		this.hour = hour;
+		this.min = min;
 	}
 	
 	// get and set method
@@ -16,5 +18,9 @@ public class Duration {
 	
 	public int getHour(){
 		return this.hour;
+	}
+	
+	public int getMin(){
+		return this.min;
 	}
 }

@@ -27,21 +27,23 @@ public class DataPackage implements Serializable {
 	}
 	
 	public byte[] serialize(TimePoint tp, Duration dr) {
-		ByteBuffer byteBuffer = ByteBuffer.allocate(5*4);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(6*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(tp.getDate());
 		intBuffer.put(tp.getHour());
 		intBuffer.put(tp.getMin());
 		intBuffer.put(dr.getDay());
 		intBuffer.put(dr.getHour());
+		intBuffer.put(dr.getMin());
 		return byteBuffer.array();
 	}
 	
 	public byte[] serialize(Duration dr) {
-		ByteBuffer byteBuffer = ByteBuffer.allocate(2*4);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(dr.getDay());
 		intBuffer.put(dr.getHour());
+		intBuffer.put(dr.getMin());
 		return byteBuffer.array();
 	}
 	
