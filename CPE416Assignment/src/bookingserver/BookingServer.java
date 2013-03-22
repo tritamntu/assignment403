@@ -1,4 +1,4 @@
-package system;
+package bookingserver;
 
 public class BookingServer {
 

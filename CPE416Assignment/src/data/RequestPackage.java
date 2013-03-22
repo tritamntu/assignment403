@@ -3,7 +3,6 @@ package data;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import booking.Serializable;
 
 
 public class RequestPackage implements Serializable {
@@ -30,6 +29,23 @@ public class RequestPackage implements Serializable {
 		intBuffer.put(this.optionalId);
 		
 		return byteBuffer.array();
+	}
+	
+	// get and set method
+	public int getRequestId() {
+		return this.requestId;
+	}
+	
+	public int getServiceId() {
+		return this.serviceId;
+	}
+	
+	public int getFacilityId() {
+		return this.facilityId;
+	}
+	
+	public int getOptionalId() {
+		return this.optionalId;
 	}
 	
 	public static void main(String [] args) {

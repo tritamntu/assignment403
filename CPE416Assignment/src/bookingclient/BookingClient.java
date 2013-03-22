@@ -1,5 +1,6 @@
-package system;
+package bookingclient;
 
 public class BookingClient {
 
+	
 }

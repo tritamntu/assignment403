@@ -3,7 +3,6 @@ package data;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import booking.Serializable;
 
 
 public class ReplyPackage implements Serializable{

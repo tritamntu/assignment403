@@ -29,4 +29,24 @@ public class BookingSlot {
 	public TimePoint getEndTime() {
 		return new TimePoint(startTime, interval);
 	}
+	
+	public int getStartDate() {
+		return this.startTime.getDate();
+	}
+	
+	public int getStartHour() {
+		return this.startTime.getHour();
+	}
+	
+	public int getStartMin() {
+		return this.startTime.getMin();
+	}
+	
+	public int getIntervalDay() {
+		return this.interval.getDay();
+	}
+	
+	public int getIntervalHour() {
+		return this.interval.getHour();
+	}
 }
