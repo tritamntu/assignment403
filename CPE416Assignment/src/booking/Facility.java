@@ -19,9 +19,33 @@ public class Facility {
 	}
 	
 	// query Availability
+	// output = true (mean available at startTime), nextTime = next occupied Time
+	// output = false(mean not available at startTime), nextTime = next available Time
 	public boolean queryAvailibility(TimePoint startTime, TimePoint nextTime) {
-		
-		return false;
+		if(slots.size() == 0) {
+			nextTime = null;
+			return true;
+		}
+		int index = 0;
+		while(index < slots.size()) {
+			BookingSlot currentSlot = slots.get(index);
+			if(currentSlot.compareTime(startTime) > 0) {
+				break;
+			}
+			index++;
+		}
+		if(index > 0 && slots.get(index-1).getEndTime().compareTime(startTime) > 0) {
+			nextTime = slots.get(index - 1).getEndTime();
+			return false;
+		}
+		if(index == 0 || index < slots.size()) {
+			BookingSlot nextSlot = slots.get(index);
+			nextTime = new TimePoint(
+					nextSlot.getStartDate(), 
+					nextSlot.getStartHour(), 
+					nextSlot.getStartMin());
+		} else nextTime = null;
+		return true;
 	}
 	
 	// add method

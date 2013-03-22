@@ -17,7 +17,7 @@ public class DataPackage implements Serializable {
 		return null;
 	}
 	
-	public byte[] serialize(TimePoint tp) {
+	public static byte[] serialize(TimePoint tp) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(tp.getDate());
@@ -26,7 +26,7 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
-	public byte[] serialize(TimePoint tp, Duration dr) {
+	public static byte[] serialize(TimePoint tp, Duration dr) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(6*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(tp.getDate());
@@ -38,7 +38,7 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
-	public byte[] serialize(Duration dr) {
+	public static byte[] serialize(Duration dr) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(dr.getDay());
@@ -47,13 +47,13 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
-	public byte[] serialize(int confirmId) {
+	public static byte[] serialize(int confirmId) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(4);
 		byteBuffer.putInt(confirmId);
 		return byteBuffer.array();
 	}
 	
-	public byte[] serialize(ArrayList<BookingSlot> slots) {
+	public static byte[] serialize(ArrayList<BookingSlot> slots) {
 		int size = slots.size();
 		ByteBuffer byteBuffer = ByteBuffer.allocate(size * 5 * 4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
@@ -68,7 +68,7 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
-	public byte[] serialize(String str) throws UnsupportedEncodingException {
+	public static byte[] serialize(String str) throws UnsupportedEncodingException {
 		return str.getBytes(StandardCharsets.US_ASCII);
 	}
 
