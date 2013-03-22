@@ -71,6 +71,8 @@ public class TimePoint {
 	public String toString() {
 		String printStr = "";
 		switch(this.date) {
+		case -1:
+			return "Empty TimePoint";
 		case TimePoint.MONDAY:
 			printStr +="Monday, ";
 			break;

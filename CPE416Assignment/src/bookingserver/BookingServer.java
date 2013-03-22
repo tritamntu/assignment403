@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 
 import data.DataPackage;
 import data.ReplyPackage;
+import data.RequestPackage;
 import data.StatusCode;
 
 import booking.Facility;
@@ -17,55 +18,79 @@ public class BookingServer {
 
 	static int port = 2000;
 	static DatagramSocket socket;
-	static DatagramPacket packet;
+	static DatagramPacket receivePacket;
 	static DatagramPacket sendPacket;
+	
 	static Facility[] fList;
+	static byte [] receiveBuffer;
+	static byte [] replyBuffer;
+	static byte [] dataBuffer;
 	
 	public static void main(String [] args) {
 		try {
-			// initialize Facility
-			fList = new Facility[5];
-			// initialize Network Socket
+			// 1. initialize Facility and Network Socket
+			createFacilities();
 			socket = new DatagramSocket(port);
-			byte[] buffer = new byte[1000];
-			packet = new DatagramPacket(buffer, buffer.length);
-			
+			receiveBuffer = new byte[500];
+			receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+			// 2. start listening to request
 			while(true) {
-				socket.receive(packet);
-				// extract client address and port
-				InetAddress clientAddr = packet.getAddress();
-				int clientPort = packet.getPort();
-				byte[] requestBuffer = packet.getData();
-				// extract request information
-				int requestId = ByteBuffer.wrap(requestBuffer, 0 , 4).getInt();
-				int serviceId = ByteBuffer.wrap(requestBuffer, 4 , 4).getInt();
-				int facilityId = ByteBuffer.wrap(requestBuffer, 8 , 4).getInt();
-				int optionalId = ByteBuffer.wrap(requestBuffer, 0 , 4).getInt();
-				// * semantics: check store request in history
+				System.out.println("Waiting for a request ..");
+				// 2.1 receive and extract argument from RequestPackage
+				socket.receive(receivePacket);
+					// extract client address and port
+				InetAddress clientAddr = receivePacket.getAddress();
+				int clientPort = receivePacket.getPort();
+				byte[] receiveBuffer = receivePacket.getData();
+					// extract RequestPackage arguments
+				RequestPackage clientRequest = new RequestPackage(
+						ByteBuffer.wrap(receiveBuffer, 0 , 4).getInt(),
+						ByteBuffer.wrap(receiveBuffer, 4 , 4).getInt(),
+						ByteBuffer.wrap(receiveBuffer, 8 , 4).getInt(),
+						ByteBuffer.wrap(receiveBuffer, 12 , 4).getInt());
+				// 2.2 * semantics: check store request in history
 				
-				// execute service
-				switch(serviceId) {
-				case 0: // query Availability
-					// receive data package: TimePoint startTime
-					socket.receive(packet);
-					byte[] dataBuffer = packet.getData();
-					int startDate = ByteBuffer.wrap(dataBuffer, 0, 4).getInt();
-					int startHour = ByteBuffer.wrap(dataBuffer, 4, 4).getInt();
-					int startMin = ByteBuffer.wrap(dataBuffer, 8, 4).getInt();
-					TimePoint startTime = new TimePoint(startDate, startHour, startMin);
-					BookingServer.queryAvailibity(facilityId, startTime, clientAddr, clientPort);
+				// 2.3 execute service
+				switch(clientRequest.getServiceId()) {
+				case RequestPackage.SERVICE_QUERY: 
+					// 2.3.1 query Availability
+					// receive DataPackage: TimePoint startTime
+					socket.receive(receivePacket);
+					byte[] dataBuffer = receivePacket.getData();
+					TimePoint startTime = new TimePoint(
+							ByteBuffer.wrap(dataBuffer, 0, 4).getInt(), 
+							ByteBuffer.wrap(dataBuffer, 0, 4).getInt(),
+							ByteBuffer.wrap(dataBuffer, 0, 4).getInt());
+					BookingServer.queryAvailibity(clientRequest.getFacilityId(), startTime, clientAddr, clientPort);
 					break;
-				case 1: // booking request
+				case RequestPackage.SERVICE_BOOK: // booking request
 					break;
-				case 2: // booking change
+				case RequestPackage.SERVICE_CHANGE: // booking change
 					break;
-				case 3: // monitor call back
+				case RequestPackage.SERVICE_MONITOR: // monitor call back
 					break;
-				case 4: // query specification
+				case RequestPackage.SERVICE_PROGRAM: // query specification
 					break;
-				case 5: // run a program
+				case RequestPackage.SERVICE_SPEC: // run a program
 					break;
 				}
+				
+				// 2.4 response to client by sending reply and data package
+				BookingServer.sendPacket = new DatagramPacket(
+						replyBuffer, 0, 
+						replyBuffer.length, 
+						clientAddr, 
+						clientPort);
+				BookingServer.socket.send(sendPacket);
+					// for some service, there is no data package
+				if(dataBuffer == null) 
+					continue;
+				BookingServer.sendPacket = new DatagramPacket(
+						dataBuffer, 0, 
+						dataBuffer.length, 
+						clientAddr, 
+						clientPort);
+				BookingServer.socket.send(sendPacket);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -87,28 +112,15 @@ public class BookingServer {
 			InetAddress clientAddr, int clientPort) 
 					throws IOException {
 		TimePoint nextTime = null;
-		// check availability and status code
+		// 1. check availability and status code
 		boolean available = fList[facilityId].queryAvailibility(startTime, nextTime);
 		int statusCode = -1;
-		if(available) 
-			statusCode = StatusCode.SUCCESS_AVAILABLE;
-		else statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
+		if(available) statusCode = StatusCode.SUCCESS_AVAILABLE;
+		else 		  statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);	
-		// send reply package to client 
-		byte [] replyPackageBytes = replyPackage.serialize();
-		BookingServer.sendPacket = new DatagramPacket(
-				replyPackageBytes, 0, 
-				replyPackageBytes.length, 
-				clientAddr, 
-				clientPort);
-		BookingServer.socket.send(BookingServer.sendPacket);
-		// send data package (TimePoint nextTime) to client
-		byte [] dataPackageBytes = DataPackage.serialize(nextTime);		
-		BookingServer.sendPacket = new DatagramPacket(
-				dataPackageBytes, 0, 
-				dataPackageBytes.length, 
-				clientAddr, 
-				clientPort);
-		BookingServer.socket.send(BookingServer.sendPacket);
+		// 2. setup reply package to client 
+		replyBuffer = replyPackage.serialize();
+		// 3. setup data package (TimePoint nextTime) to client
+		dataBuffer = DataPackage.serialize(nextTime);		
 	}
 }
