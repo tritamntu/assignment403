@@ -3,7 +3,7 @@ package booking;
 public class BookingSlot {
 	private TimePoint startTime;
 	private Duration interval;
-	
+	//constructor
 	public BookingSlot(TimePoint tp, Duration dr) {
 		startTime = new TimePoint(tp.getDate(), tp.getHour(), tp.getMin());
 		interval = new Duration(dr.getDay(), dr.getHour());
