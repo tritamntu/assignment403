@@ -18,6 +18,12 @@ public class Facility {
 		return "Id-" + this.id + ": " + this.desc;
 	}
 	
+	// query Availability
+	public boolean queryAvailibility(TimePoint startTime, TimePoint nextTime) {
+		
+		return false;
+	}
+	
 	// add method
 	public void addSlot(BookingSlot newSlot) {
 		int index = 0;
@@ -58,6 +64,7 @@ public class Facility {
 		}
 	}
 	public static void main(String [] args) {
+		/*
 		Facility books = new Facility(1, "Books");
 		BookingSlot bs1 = new BookingSlot(new TimePoint(TimePoint.MONDAY, 10, 0), new Duration(0, 3));
 		
@@ -72,6 +79,6 @@ public class Facility {
 		books.addSlot(bs5);
 		books.addSlot(bs2);
 		books.printSlot();
-		System.out.println("Terminate");
+		System.out.println("Terminate"); */
 	}
 }
