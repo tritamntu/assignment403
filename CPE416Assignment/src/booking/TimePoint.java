@@ -1,4 +1,4 @@
-package SupportingClasses;
+package booking;
 
 public class TimePoint {
 	 

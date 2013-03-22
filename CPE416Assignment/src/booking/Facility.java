@@ -1,4 +1,4 @@
-package SupportingClasses;
+package booking;
 
 import java.util.ArrayList;
 

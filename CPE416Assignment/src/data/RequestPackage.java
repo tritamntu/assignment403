@@ -1,7 +1,10 @@
-package SupportingClasses;
+package data;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import booking.Serializable;
+
 
 public class RequestPackage implements Serializable {
 	private int requestId;
