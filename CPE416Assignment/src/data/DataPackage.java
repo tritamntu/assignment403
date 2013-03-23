@@ -17,6 +17,7 @@ public class DataPackage implements Serializable {
 		return null;
 	}
 	
+	// serialize method 
 	public static byte[] serialize(TimePoint tp) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
@@ -31,6 +32,7 @@ public class DataPackage implements Serializable {
 		}
 		return byteBuffer.array();
 	}
+	
 	
 	public static byte[] serialize(TimePoint tp, Duration dr) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(6*4);
@@ -77,5 +79,20 @@ public class DataPackage implements Serializable {
 	public static byte[] serialize(String str) throws UnsupportedEncodingException {
 		return str.getBytes(StandardCharsets.US_ASCII);
 	}
+	
+	// de-serialize methods:
+	public static TimePoint extractTimePoint(byte[] buffer, int offset) {
+		return new TimePoint(
+				ByteBuffer.wrap(buffer, offset, 4).getInt(), 
+				ByteBuffer.wrap(buffer, offset + 4, 4).getInt(),
+				ByteBuffer.wrap(buffer, offset + 8, 4).getInt());
+	}
 
+	public static Duration extractDuration(byte[] buffer, int offset) {
+		return new Duration(
+				ByteBuffer.wrap(buffer, offset, 4).getInt(), 
+				ByteBuffer.wrap(buffer, offset + 4, 4).getInt(),
+				ByteBuffer.wrap(buffer, offset + 8, 4).getInt());
+		
+	}
 }

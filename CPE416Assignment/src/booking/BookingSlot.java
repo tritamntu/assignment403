@@ -3,6 +3,8 @@ package booking;
 public class BookingSlot {
 	private TimePoint startTime;
 	private Duration interval;
+	private int confirmationId;
+	
 	//constructor
 	public BookingSlot(TimePoint tp, Duration dr) {
 		startTime = new TimePoint(tp.getDate(), tp.getHour(), tp.getMin());
@@ -17,8 +19,16 @@ public class BookingSlot {
 		return this.startTime.compareTime(slot.startTime);
 	}
 	
-	
 	// get and set method
+	
+	// get a update slot from this slot
+	public BookingSlot getUpdateSlot(Duration dr) {
+		BookingSlot updateSlot = null;
+		TimePoint updateTP = new TimePoint(this.startTime, dr);
+		updateSlot = new BookingSlot(updateTP, this.interval);
+		return updateSlot;
+	}
+	
 	public String toString() {
 		String printStr = "Start at: " + this.startTime.toString() + "\n";
 		printStr += "Duration: " + this.interval.getDay() + " day(s), " 
@@ -54,5 +64,13 @@ public class BookingSlot {
 	
 	public int getIntervalMin() {
 		return this.interval.getMin();
+	}
+	
+	public int getConfirmationId() {
+		return this.confirmationId;
+	}
+	
+	public void setConfirmationId(int confirmationId) {
+		this.confirmationId = confirmationId;
 	}
 }

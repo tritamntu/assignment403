@@ -5,6 +5,10 @@ public class Duration {
 	private int hour;
 	private int min; 
 	
+	public Duration() {
+		this.day = this.hour = this.min = -1;
+	}
+	
 	public Duration(int day, int hour, int min) {
 		this.day = day;
 		this.hour = hour;
@@ -22,5 +26,9 @@ public class Duration {
 	
 	public int getMin(){
 		return this.min;
+	}
+	
+	public String toString() {
+		return this.day + " day(s), " + this.hour + " hour(s), " + this.min + " min(s)";
 	}
 }
