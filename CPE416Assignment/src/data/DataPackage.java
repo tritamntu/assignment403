@@ -20,9 +20,15 @@ public class DataPackage implements Serializable {
 	public static byte[] serialize(TimePoint tp) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
-		intBuffer.put(tp.getDate());
-		intBuffer.put(tp.getHour());
-		intBuffer.put(tp.getMin());
+		if(tp == null) {
+			intBuffer.put(-1);
+			intBuffer.put(-1);
+			intBuffer.put(-1);
+		} else {
+			intBuffer.put(tp.getDate());
+			intBuffer.put(tp.getHour());
+			intBuffer.put(tp.getMin());
+		}
 		return byteBuffer.array();
 	}
 	

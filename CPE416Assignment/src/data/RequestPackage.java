@@ -6,6 +6,14 @@ import java.nio.IntBuffer;
 
 
 public class RequestPackage implements Serializable {
+	
+	public static final int SERVICE_QUERY = 1;
+	public static final int SERVICE_BOOK = 2;
+	public static final int SERVICE_CHANGE = 3;
+	public static final int SERVICE_MONITOR = 4;
+	public static final int SERVICE_PROGRAM = 5;
+	public static final int SERVICE_SPEC = 6;
+	
 	private int requestId;
 	private int serviceId;
 	private int facilityId;
