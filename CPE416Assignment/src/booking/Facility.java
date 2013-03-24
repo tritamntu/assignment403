@@ -156,10 +156,5 @@ public class Facility {
 		System.out.println(books.toString());
 		System.out.println(books.getBookSchedule());
 		System.out.println("Terminate"); 
-		
-		System.out.println("Book Change");
-		System.out.println(books.bookChange(5, new Duration(0,1,0)));
-		System.out.println(books.getBookSchedule());
-		
 	}
 }

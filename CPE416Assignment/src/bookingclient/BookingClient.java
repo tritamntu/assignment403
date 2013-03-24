@@ -1,6 +1,7 @@
 package bookingclient;
 
 import java.io.IOException;
+import java.util.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -26,15 +27,56 @@ public class BookingClient {
 	static byte[] sendBuffer;
 	static byte[] receiveBuffer;
 	static int requestId;
+	static Scanner sc = new Scanner(System.in);
 	
 	public static void main(String [] args) {
-		
 		sendBuffer = new byte[500];
 		receiveBuffer = new byte[500];
 		receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 		try {
 			socket = new DatagramSocket(clientPort);
 			serverAddr = InetAddress.getByName("127.0.0.1");
+			
+			int option;
+			do
+			{
+				displayInterface();
+				option= sc.nextInt();
+				sc.nextLine(); // to remove the \n in buffer after nextInt
+				
+				String facilityName;
+				String days;
+				String startTime, endTime;
+				switch(option){
+				
+				case 1: 
+					System.out.print("Enter facility Name: " );
+					facilityName = sc.nextLine().trim();
+					System.out.print("Enter days as in MONDAY TUESDAY: " );
+					days= sc.nextLine().trim().toUpperCase();
+					
+					break;
+				case 2:
+					System.out.print("Enter facility Name: " );
+					facilityName = sc.nextLine().trim();
+					System.out.print("Enter start time in DAY/24hrs/mins: " );
+					startTime= sc.nextLine().trim().toUpperCase();
+					System.out.print("Enter end time in DAY/24hrs/mins: " );
+					endTime= sc.nextLine().trim().toUpperCase();
+					
+					break;
+				case 3:
+					
+					break;
+				case 4: 
+					break;
+				}
+				
+				
+			}while(option!=5);
+			 
+			
+			
 			TimePoint tp = new TimePoint(TimePoint.MONDAY, 10, 1);
 			requestId = 1;
 			//queryAvailability(1, tp);
@@ -46,7 +88,9 @@ public class BookingClient {
 			if(confirmId1 != -1) {
 				bookChange(1, confirmId1, new Duration(0, 2, 0));
 			}
-			System.out.println("Client terminates ..");
+			
+			
+			System.out.println("Client terminates ..");	
 		} catch (SocketException | UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,6 +98,17 @@ public class BookingClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	public static void displayInterface()
+	{
+		System.out.println("Please enter an option from 1 to 5");
+		System.out.println("1. Query availablity of a facility");
+		System.out.println("2. Book a facility");
+		System.out.println("3. Change a booking");
+		System.out.println("4. Monitor the availability of a facility");
+		System.out.println("5. Exit");
 		
 	}
 	
