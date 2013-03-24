@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import data.DataPackage;
 import data.ReplyPackage;
@@ -14,6 +16,7 @@ import data.StatusCode;
 import booking.BookingSlot;
 import booking.Duration;
 import booking.Facility;
+import booking.MonitorClient;
 import booking.TimePoint;
 
 public class BookingServer {
@@ -22,7 +25,7 @@ public class BookingServer {
 	static DatagramSocket socket;
 	static DatagramPacket receivePacket;
 	static DatagramPacket sendPacket;
-	
+	static int statusCode; 
 	static Facility[] fList;
 	static byte [] receiveBuffer;
 	static byte [] replyBuffer;
@@ -75,7 +78,7 @@ public class BookingServer {
 					System.out.println("\tStart time: " + startTime.toString());
 					System.out.println("\tDuration: " + interval.toString());
 					System.out.println("Facility id: " + clientRequest.getFacilityId());
-					BookingServer.bookRequest(clientRequest.getFacilityId(), startTime, interval);
+					statusCode = BookingServer.bookRequest(clientRequest.getFacilityId(), startTime, interval);
 					System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
 					break;
 				case RequestPackage.SERVICE_CHANGE: // booking change
@@ -87,10 +90,16 @@ public class BookingServer {
 					System.out.println("ConfirmId: " + confirmationId);
 					System.out.println("Duration:  " + interval.toString());
 					System.out.println();
-					BookingServer.bookChange(clientRequest.getOptionalId(), confirmationId, interval);
+					statusCode = BookingServer.bookChange(clientRequest.getOptionalId(), confirmationId, interval);
 					System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
 					break;
 				case RequestPackage.SERVICE_MONITOR: // monitor call back
+					socket.receive(receivePacket);
+					dataBuffer = receivePacket.getData();
+					interval = DataPackage.extractDuration(dataBuffer, 0);
+					BookingServer.monitor(clientRequest.getFacilityId(), 
+							clientAddr, clientPort, interval);
+					
 					break;
 				case RequestPackage.SERVICE_PROGRAM: // query specification
 					break;
@@ -114,10 +123,14 @@ public class BookingServer {
 						clientAddr, 
 						clientPort);
 				BookingServer.socket.send(sendPacket);
+				if(statusCode == StatusCode.SUCCESS_BOOKING
+				|| statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
+					BookingServer.callback(clientRequest.getFacilityId());
+				} 
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 	}
 	
@@ -147,7 +160,7 @@ public class BookingServer {
 	}
 	
 	// service 2 bookRequest 
-	public static void bookRequest(
+	public static int bookRequest(
 			int facilityId, 
 			TimePoint startTime, 
 			Duration interval) {
@@ -158,9 +171,10 @@ public class BookingServer {
 		else statusCode =StatusCode.SUCCESS_BOOKING;
 		replyBuffer = (new ReplyPackage(statusCode)).serialize();
 		dataBuffer = DataPackage.serialize(confirmId);
+		return statusCode;
 	}
 	
-	public static void bookChange(
+	public static int bookChange(
 			int facilityId, int confirmationId, 
 			Duration interval) {
 		int statusCode = -1;
@@ -170,7 +184,35 @@ public class BookingServer {
 		else statusCode = StatusCode.SUCCESS_BOOKING_CHANGE;
 		replyBuffer = (new ReplyPackage(statusCode)).serialize();
 		dataBuffer = DataPackage.serialize(confirmId);
+		return statusCode;
 	}
 	
+	public static void monitor(
+			int facilityId,  InetAddress clientAddr, int clientPort, Duration interval) 
+					throws UnknownHostException {
+		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, interval);
+		fList[facilityId].addMonitorClient(newClient);
+		int statusCode = StatusCode.SUCCESS_ADD_MONITOR;
+		replyBuffer = (new ReplyPackage(statusCode)).serialize();
+		dataBuffer = null;
+	}
+	
+	public static void callback(int facilityId) 
+			throws IOException {
+		ArrayList<MonitorClient> monitorList = fList[facilityId].getClientList();
+		if(monitorList.size() > 0) {
+			ArrayList<BookingSlot> slotList = fList[facilityId].getBookSlots();
+			dataBuffer = DataPackage.serialize(slotList);
+			for(int i = 0; i < monitorList.size(); i++) {
+				MonitorClient client = monitorList.get(i);
+				InetAddress clientAddr = InetAddress.getByName(client.getClientAddress());
+				int clientPort = client.getClientPort();
+				BookingServer.sendPacket = new DatagramPacket(
+						dataBuffer, 0, dataBuffer.length,
+						clientAddr, clientPort);
+				BookingServer.socket.send(BookingServer.sendPacket);
+			}
+		}
+	}
 	
 }

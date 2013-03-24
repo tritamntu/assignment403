@@ -63,7 +63,7 @@ public class DataPackage implements Serializable {
 	
 	public static byte[] serialize(ArrayList<BookingSlot> slots) {
 		int size = slots.size();
-		ByteBuffer byteBuffer = ByteBuffer.allocate(size * 5 * 4);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(4 + size * 6 * 4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		for(int i = 0; i < size; i++) {
 			BookingSlot slot = slots.get(i);
@@ -72,6 +72,7 @@ public class DataPackage implements Serializable {
 			intBuffer.put(slot.getStartMin());
 			intBuffer.put(slot.getIntervalDay());
 			intBuffer.put(slot.getIntervalHour());
+			intBuffer.put(slot.getIntervalMin());
 		}
 		return byteBuffer.array();
 	}
@@ -93,6 +94,17 @@ public class DataPackage implements Serializable {
 				ByteBuffer.wrap(buffer, offset, 4).getInt(), 
 				ByteBuffer.wrap(buffer, offset + 4, 4).getInt(),
 				ByteBuffer.wrap(buffer, offset + 8, 4).getInt());
-		
+	}
+	
+	public static ArrayList<BookingSlot> extractSlotList(byte[] buffer, int offset) {
+		ArrayList<BookingSlot> slotList = new ArrayList<BookingSlot>();
+		int slotSize = ByteBuffer.wrap(buffer, offset, 4).getInt();
+		for(int i = 0; i < slotSize; i++) {
+			TimePoint tp = DataPackage.extractTimePoint(buffer, offset + 4 + i * 6 * 4);
+			Duration dr = DataPackage.extractDuration(buffer, offset + 4 + i * 6 * 4 + 3 * 4);
+			BookingSlot slot = new BookingSlot(tp, dr);
+			slotList.add(slot);
+		}
+		return slotList;
 	}
 }

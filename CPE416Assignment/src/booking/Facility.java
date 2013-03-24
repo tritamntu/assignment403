@@ -6,12 +6,14 @@ public class Facility {
 	private int id;
 	private String desc;
 	private ArrayList<BookingSlot> slots;
+	private ArrayList<MonitorClient> monitorList;
 	private int confirmId = 0;
 	
 	public Facility(int id, String desc) {
 		this.id = id;
 		this.desc = desc;
 		slots = new ArrayList<BookingSlot>();
+		monitorList = new ArrayList<MonitorClient>();
 	}
 	
 	// toString method
@@ -28,6 +30,14 @@ public class Facility {
 			str += "Slot " + i + ": \n" + slots.get(i).toString() + "\n";
 		}
 		return str;
+	}
+	
+	public ArrayList<MonitorClient> getClientList() {
+		return this.monitorList;
+	}
+	
+	public ArrayList<BookingSlot> getBookSlots() {
+		return this.slots;
 	}
 	
 	// query Availability
@@ -132,17 +142,21 @@ public class Facility {
 		return addResult;
 	}
 	
+	public void addMonitorClient(MonitorClient client) {
+		this.monitorList.add(client);
+	}	
+	
 	public void printSlot() {
 		for(int i = 0; i < slots.size(); i++) {
 			System.out.println("Slot " + i + ":");
 			System.out.println(slots.get(i).toString());
 		}
 	}
+	
 	public static void main(String [] args) {
 		
 		Facility books = new Facility(1, "Books");
 		BookingSlot bs1 = new BookingSlot(new TimePoint(TimePoint.MONDAY, 10, 0), new Duration(0, 3, 0));
-		
 		BookingSlot bs3 = new BookingSlot(new TimePoint(TimePoint.SUNDAY, 10, 1), new Duration(0, 3, 0));
 		BookingSlot bs4 = new BookingSlot(new TimePoint(TimePoint.FRIDAY, 10, 1), new Duration(0, 3, 0));
 		BookingSlot bs5 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 10, 1), new Duration(0, 3, 0));

@@ -114,14 +114,14 @@ public class TimePoint {
 	}
 	
 	public static void main(String [] args) {
-<<<<<<< HEAD
+/*
 		TimePoint tp = new TimePoint(1,1,1);
 		System.out.println(tp.toString());
 		Duration dr = new Duration(0,-2,1);
 		System.out.println(dr.toString());
 		TimePoint tp2 = new TimePoint(tp, dr);
 		System.out.println(tp2.toString());
-=======
+
 		
 		TimePoint tp1 = new TimePoint(TimePoint.MONDAY, 14, 59);
 		Duration dr = new Duration(0, 0, 1);
@@ -130,7 +130,7 @@ public class TimePoint {
 		System.out.println(tp1.compareTime(new TimePoint(TimePoint.MONDAY, 15,0)));
 		BookingSlot slot = new BookingSlot(tp1, dr);
 		System.out.println(slot.toString()); 
->>>>>>> 5a348be7e43bb615713deee02a35b2dd8c0060e3
+*/
 	}
 	
 
