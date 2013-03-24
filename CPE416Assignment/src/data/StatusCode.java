@@ -10,5 +10,5 @@ public class StatusCode {
 	public static final int SUCCESS_BOOKING_CHANGE = 4;
 	public static final int FAILED_BOOKING_CHANGE = 5;
 	public static final int SUCCESS_ADD_MONITOR = 6;
-	//public static final int SUCCESS_QUERY = 6;
+	public static final int SUCCESS_PROGRAM = 6;
 }

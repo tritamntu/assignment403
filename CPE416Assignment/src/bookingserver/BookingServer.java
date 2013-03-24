@@ -102,9 +102,10 @@ public class BookingServer {
 							clientAddr, clientPort, interval);
 					break;
 				case RequestPackage.SERVICE_PROGRAM: // query specification
+					
 					break;
 				case RequestPackage.SERVICE_SPEC: // run a program
-					
+					BookingServer.queryDescription(clientRequest.getFacilityId());
 					break;
 				}
 				
@@ -222,6 +223,16 @@ public class BookingServer {
 		int statusCode = StatusCode.SUCCESS_AVAILABLE;
 		replyBuffer = (new ReplyPackage(statusCode)).serialize();
 		dataBuffer = DataPackage.serialize(str);
+	}
+	
+	public static void runProgram(int facilityId, int applicationId) {
+		int statusCode = StatusCode.FACILITY_NOT_FOUND;
+		if(facilityId == 3 || facilityId == 4) {
+			statusCode = StatusCode.SUCCESS_PROGRAM;
+			System.out.println("Application Id " + applicationId + " is executed.");
+		}
+		replyBuffer = (new ReplyPackage(statusCode)).serialize();
+		dataBuffer = null;
 	}
 	
 }
