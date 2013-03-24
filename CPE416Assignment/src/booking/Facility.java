@@ -16,13 +16,13 @@ public class Facility {
 	
 	// toString method
 	public String toString() {
-		return "Id-" + this.id + ": " + this.desc;
+		return "Id:" + this.id + ":" + this.desc;
 	}
 	
 	// get all bookings slot string
 	public String getBookSchedule() {
 		if(this.slots.size() == 0) 
-			return "There is not booking slots for " + this.desc;
+			return "There is no booking slots for " + this.desc;
 		String str = "";
 		for(int i = 0;  i < this.slots.size(); i++) {
 			str += "Slot " + i + ": \n" + slots.get(i).toString() + "\n";
@@ -131,29 +131,35 @@ public class Facility {
 			this.addSlot(currSlot);
 		return addResult;
 	}
-	
+	/* Redundant method not needed when getBookSchedule is there
 	public void printSlot() {
 		for(int i = 0; i < slots.size(); i++) {
 			System.out.println("Slot " + i + ":");
 			System.out.println(slots.get(i).toString());
 		}
 	}
+	*/
+	
 	public static void main(String [] args) {
 		
 		Facility books = new Facility(1, "Books");
-		BookingSlot bs1 = new BookingSlot(new TimePoint(TimePoint.MONDAY, 10, 0), new Duration(0, 3, 0));
-		
-		BookingSlot bs3 = new BookingSlot(new TimePoint(TimePoint.SUNDAY, 10, 1), new Duration(0, 3, 0));
-		BookingSlot bs4 = new BookingSlot(new TimePoint(TimePoint.FRIDAY, 10, 1), new Duration(0, 3, 0));
-		BookingSlot bs5 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 10, 1), new Duration(0, 3, 0));
-		BookingSlot bs2 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 13, 0), new Duration(0, 3, 0));
+		BookingSlot bs1 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 0, 0), new Duration(0, 3, 0));	
+		BookingSlot bs2 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 3, 0), new Duration(0, 3, 0));
+		BookingSlot bs3 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 6, 1), new Duration(0, 3, 0));
+		BookingSlot bs4 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 9, 1), new Duration(0, 3, 0));
+		BookingSlot bs5 = new BookingSlot(new TimePoint(TimePoint.THURSDAY, 12, 30), new Duration(0, 3, 0));
 		books.addSlot(bs1);
-		System.out.println();
+		books.addSlot(bs2);
 		books.addSlot(bs3);
 		books.addSlot(bs4);
 		books.addSlot(bs5);
-		books.addSlot(bs2);
-		books.printSlot();
+		System.out.println(books.toString());
+		System.out.println(books.getBookSchedule());
 		System.out.println("Terminate"); 
+		
+		System.out.println("Book Change");
+		System.out.println(books.bookChange(5, new Duration(0,1,0)));
+		System.out.println(books.getBookSchedule());
+		
 	}
 }
