@@ -1,6 +1,7 @@
 package bookingserver;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -99,11 +100,11 @@ public class BookingServer {
 					interval = DataPackage.extractDuration(dataBuffer, 0);
 					BookingServer.monitor(clientRequest.getFacilityId(), 
 							clientAddr, clientPort, interval);
-					
 					break;
 				case RequestPackage.SERVICE_PROGRAM: // query specification
 					break;
 				case RequestPackage.SERVICE_SPEC: // run a program
+					
 					break;
 				}
 				
@@ -213,6 +214,14 @@ public class BookingServer {
 				BookingServer.socket.send(BookingServer.sendPacket);
 			}
 		}
+	}
+	
+	public static void  queryDescription(int facilityId) 
+			throws UnsupportedEncodingException {
+		String str = fList[facilityId].toString();
+		int statusCode = StatusCode.SUCCESS_AVAILABLE;
+		replyBuffer = (new ReplyPackage(statusCode)).serialize();
+		dataBuffer = DataPackage.serialize(str);
 	}
 	
 }
