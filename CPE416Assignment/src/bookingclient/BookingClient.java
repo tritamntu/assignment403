@@ -8,11 +8,13 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import data.DataPackage;
 import data.RequestPackage;
 import data.StatusCode;
 
+import booking.BookingSlot;
 import booking.Duration;
 import booking.TimePoint;
 
@@ -90,15 +92,17 @@ public class BookingClient {
 			}
 			
 			
-			System.out.println("Client terminates ..");	
+			Duration interval = new Duration(1, 2, 0);
+			BookingClient.monitor(1, interval);
+			System.out.println("Client terminates ..");
+
 		} catch (SocketException | UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 	
 	public static void displayInterface()
@@ -175,6 +179,31 @@ public class BookingClient {
 			System.out.println("Booking change was successful, new ConfirmationID = " + confirmId);
 		} else {
 			System.out.println("Booking change was failed due to time violation with other booking slots!");
+		}
+	}
+	
+	public static void monitor(int facilityId, Duration interval) throws IOException {
+		System.out.println("Monitor: send monitor request");
+		// 1. send request package to server
+		RequestPackage requestPackage = new RequestPackage(
+				requestId, RequestPackage.SERVICE_MONITOR, facilityId, 0);
+		sendPackage(requestPackage.serialize());
+		// 2. send data package to server
+		sendPackage(DataPackage.serialize(interval));
+		// 3. receive reply package from server
+		int statusCode = receiveReplyPackage();
+		// 4. receive data package from server 
+		if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
+			System.out.println("Monitor: successful continue receive");
+			while(true) {
+				socket.receive(receivePacket);
+				receiveBuffer = receivePacket.getData();
+				ArrayList<BookingSlot> slotList = DataPackage.extractSlotList(receiveBuffer, 0);
+				for(int i = 0; i < slotList.size(); i++) {
+					BookingSlot slot = slotList.get(i);
+					System.out.println(slot.toString());
+				}
+			}
 		}
 	}
 	
