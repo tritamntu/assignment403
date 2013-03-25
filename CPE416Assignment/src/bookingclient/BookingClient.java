@@ -38,7 +38,7 @@ public class BookingClient {
 		try {
 			socket = new DatagramSocket(clientPort);
 			serverAddr = InetAddress.getByName("127.0.0.1");
-			
+			/*
 			int option;
 			do
 			{
@@ -77,7 +77,7 @@ public class BookingClient {
 				
 			}while(option!=5);
 			 
-			
+			*/
 			
 			TimePoint tp = new TimePoint(TimePoint.MONDAY, 10, 1);
 			requestId = 1;
@@ -94,6 +94,7 @@ public class BookingClient {
 			
 			Duration interval = new Duration(1, 2, 0);
 			BookingClient.monitor(1, interval);
+			
 			System.out.println("Client terminates ..");
 
 		} catch (SocketException | UnknownHostException e) {
@@ -192,6 +193,7 @@ public class BookingClient {
 		sendPackage(DataPackage.serialize(interval));
 		// 3. receive reply package from server
 		int statusCode = receiveReplyPackage();
+		System.out.println("StatusCode = " + statusCode);
 		// 4. receive data package from server 
 		if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
 			System.out.println("Monitor: successful continue receive");

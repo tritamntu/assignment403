@@ -147,6 +147,13 @@ public class Facility {
 			this.monitorList.add(client);
 	}
 	
+	public void printSlot() {
+	    for(int i = 0; i < slots.size(); i++) {
+	      System.out.println("Slot " + i + ":");
+	      System.out.println(slots.get(i).toString());
+	    }
+	}
+	
 	public static void main(String [] args) {
 		
 		Facility books = new Facility(1, "Books");

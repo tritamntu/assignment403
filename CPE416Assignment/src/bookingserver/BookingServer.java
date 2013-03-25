@@ -54,6 +54,10 @@ public class BookingServer {
 						ByteBuffer.wrap(receiveBuffer, 4 , 4).getInt(),
 						ByteBuffer.wrap(receiveBuffer, 8 , 4).getInt(),
 						ByteBuffer.wrap(receiveBuffer, 12 , 4).getInt());
+				
+				System.out.println("Request from: " + clientAddr.getHostAddress() + ":" + clientPort);
+				System.out.println("Service Id = " + clientRequest.getServiceId());
+				
 				// 2.2 * semantics: check store request in history
 				
 				// 2.3 execute service
@@ -117,18 +121,23 @@ public class BookingServer {
 						clientPort);
 				BookingServer.socket.send(sendPacket);
 					// for some service, there is no data package
-				if(dataBuffer == null) 
-					continue;
-				BookingServer.sendPacket = new DatagramPacket(
-						dataBuffer, 0, 
-						dataBuffer.length, 
-						clientAddr, 
-						clientPort);
-				BookingServer.socket.send(sendPacket);
+				if(dataBuffer != null) {
+					BookingServer.sendPacket = new DatagramPacket(
+							dataBuffer, 0, 
+							dataBuffer.length, 
+							clientAddr, 
+							clientPort);
+					BookingServer.socket.send(sendPacket);
+				}
+				
 				if(statusCode == StatusCode.SUCCESS_BOOKING
 				|| statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
 					BookingServer.callback(clientRequest.getFacilityId());
 				} 
+				
+				System.out.println("RequestHandler ends");
+				System.out.println("....................");
+				System.out.println();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -148,6 +157,7 @@ public class BookingServer {
 	// service 1 queryAvailability
 	public static void queryAvailibity(
 			int facilityId, TimePoint startTime)  {
+		System.out.println("Start Service 1: Query Availability");
 		TimePoint nextTime = null;
 		// 1. check availability and status code
 		boolean available = fList[facilityId].queryAvailibility(startTime, nextTime);
@@ -166,6 +176,7 @@ public class BookingServer {
 			int facilityId, 
 			TimePoint startTime, 
 			Duration interval) {
+		System.out.println("Start Service 2: Book Request");
 		int confirmId = fList[facilityId].addSlot(new BookingSlot(startTime, interval));
 		int statusCode;
 		if(confirmId == -1) 
@@ -179,6 +190,7 @@ public class BookingServer {
 	public static int bookChange(
 			int facilityId, int confirmationId, 
 			Duration interval) {
+		System.out.println("Start Service 3: Booking Change");
 		int statusCode = -1;
 		int confirmId = fList[facilityId].bookChange(confirmationId, interval);
 		if(confirmId == -1) 
@@ -192,6 +204,7 @@ public class BookingServer {
 	public static void monitor(
 			int facilityId,  InetAddress clientAddr, int clientPort, Duration interval) 
 					throws UnknownHostException {
+		System.out.println("Start Service 4: Monitor");
 		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, interval);
 		fList[facilityId].addMonitorClient(newClient);
 		int statusCode = StatusCode.SUCCESS_ADD_MONITOR;
@@ -201,8 +214,10 @@ public class BookingServer {
 	
 	public static void callback(int facilityId) 
 			throws IOException {
+		System.out.println("Start Call back");
 		ArrayList<MonitorClient> monitorList = fList[facilityId].getClientList();
 		if(monitorList.size() > 0) {
+			System.out.println("Callback: clientlist > 0");
 			ArrayList<BookingSlot> slotList = fList[facilityId].getBookSlots();
 			dataBuffer = DataPackage.serialize(slotList);
 			for(int i = 0; i < monitorList.size(); i++) {
@@ -214,6 +229,8 @@ public class BookingServer {
 						clientAddr, clientPort);
 				BookingServer.socket.send(BookingServer.sendPacket);
 			}
+		} else {
+			System.out.println("Client list is empty");
 		}
 	}
 	
