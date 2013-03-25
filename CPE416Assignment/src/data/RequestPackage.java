@@ -56,6 +56,13 @@ public class RequestPackage implements Serializable {
 		return this.optionalId;
 	}
 	
+	public String toString() {
+		return "Request:" + this.requestId + 
+			 ", Service: " + this.serviceId + 
+			 ", Facility: " + this.facilityId + 
+			 ", OptionalId :" + this.optionalId;
+	}
+	
 	public static void main(String [] args) {
 		int[] data = { 100, 201, 300, 400 };
 

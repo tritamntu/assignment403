@@ -13,4 +13,5 @@ public class StatusCode {
 	public static final int SUCCESS_PROGRAM = 7;
 	public static final int ACKNOWLEDGEMENT = 8;
 	public static final int ACKNOWLEDGEMENT_FAILED = 9;
+	public static final int REQUEST_DUPLICATE = 10;
 }
