@@ -142,6 +142,11 @@ public class Facility {
 		return addResult;
 	}
 
+	public void addMonitorClient(MonitorClient client) {
+		if(client != null)
+			this.monitorList.add(client);
+	}
+	
 	public static void main(String [] args) {
 		
 		Facility books = new Facility(1, "Books");
