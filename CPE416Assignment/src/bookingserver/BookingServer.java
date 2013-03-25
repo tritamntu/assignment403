@@ -160,7 +160,7 @@ public class BookingServer {
 					break;
 				case RequestPackage.SERVICE_SPEC: 
 					// service 6 run a program
-					BookingServer.queryDescription(clientRequest.getFacilityId());
+					BookingServer.queryFacilityList();
 					break;
 				} } catch (SocketTimeoutException e) {
 					// Timeout: server can't receive data package from client, execution terminates
@@ -293,7 +293,7 @@ public class BookingServer {
 		}
 	}
 	
-	public static int  queryDescription(int facilityId) 
+	public static int queryDescription(int facilityId) 
 			throws UnsupportedEncodingException {
 		// 1. search description of the facility
 		String str = fList[facilityId].toString();
@@ -301,6 +301,18 @@ public class BookingServer {
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
 		// 2. setup data buffer to client
 		dataBuffer = replyPackage.serialize(DataPackage.serialize(str));
+		return statusCode;
+	}
+	
+	public static int queryFacilityList() throws UnsupportedEncodingException {
+		// 1. create string array of facility names
+		int statusCode = StatusCode.SUCCESS_AVAILABLE;
+		String[] strAr = new String[fList.length];
+		for(int i = 0; i < strAr.length; i++)
+			strAr[i] = fList[i].getDesc();
+		ReplyPackage rp = new ReplyPackage(statusCode);
+		// 2. setup data buffer to client
+		dataBuffer = rp.serialize(DataPackage.serialize(strAr));
 		return statusCode;
 	}
 	

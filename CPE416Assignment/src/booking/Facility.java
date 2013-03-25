@@ -21,6 +21,10 @@ public class Facility {
 		return "Id:" + this.id + ":" + this.desc;
 	}
 	
+	public String getDesc() {
+		return this.desc;
+	}
+	
 	// get all bookings slot string
 	public String getBookSchedule() {
 		if(this.slots.size() == 0) 
