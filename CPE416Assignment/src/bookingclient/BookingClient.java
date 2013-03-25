@@ -32,11 +32,12 @@ public class BookingClient {
 	static Scanner sc = new Scanner(System.in);
 	
 	public static void main(String [] args) {
-		sendBuffer = new byte[500];
-		receiveBuffer = new byte[500];
+		sendBuffer = new byte[50];
+		receiveBuffer = new byte[50];
 		receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 		try {
 			socket = new DatagramSocket(clientPort);
+			//serverAddr = InetAddress.getByName("192.168.0.109");
 			serverAddr = InetAddress.getByName("127.0.0.1");
 			/*
 			int option;
@@ -91,7 +92,6 @@ public class BookingClient {
 				bookChange(1, confirmId1, new Duration(0, 2, 0));
 			}
 			
-			
 			Duration interval = new Duration(1, 2, 0);
 			BookingClient.monitor(1, interval);
 			
@@ -119,14 +119,22 @@ public class BookingClient {
 	
 	// service 1 query Availability
 	public static void queryAvailability(int facilityId, TimePoint tp) throws IOException {
+		System.out.println("Service 1: query Availability");
 		// 1. send request package to server 
+		System.out.println(requestId + ", " + RequestPackage.SERVICE_QUERY + ", " + facilityId + ", 0");
 		RequestPackage queryRequest = new RequestPackage(
 				requestId, RequestPackage.SERVICE_QUERY, facilityId, 0);
 		sendPackage(queryRequest.serialize());
+		// 1.a receive acknowledgment package
+		int statusCode = receiveAckPackage();
+		if(statusCode != StatusCode.ACKNOWLEDGEMENT) {
+			System.out.println("Failed Acknowledgement from server");
+			return ;
+		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(tp));
 		// 3. receive reply package to server
-		int statusCode = receiveReplyPackage();
+		statusCode = receiveReplyPackage();
 		// 4. receive data package to server
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
@@ -142,14 +150,21 @@ public class BookingClient {
 	
 	// service 2 booking request
 	public static int bookRequest(int facilityId, TimePoint startTime, Duration interval) throws IOException {
+		System.out.println("Service 2: book request");
 		// 1. send request package to server
 		RequestPackage queryRequest = new RequestPackage(
 				requestId, RequestPackage.SERVICE_BOOK,	facilityId, 0);
 		sendPackage(queryRequest.serialize());
+		// 1.a receive acknowledgment package
+		int statusCode = receiveAckPackage();
+		if(statusCode != StatusCode.ACKNOWLEDGEMENT) {
+			System.out.println("Failed Acknowledgement from server");
+			return StatusCode.ACKNOWLEDGEMENT_FAILED;
+		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(startTime, interval));
 		// 3. receive reply package from server
-		int statusCode = receiveReplyPackage();
+		statusCode = receiveReplyPackage();
 		// 4. receive data package from server
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
@@ -164,14 +179,21 @@ public class BookingClient {
 	
 	// service 3 booking change 
 	public static void bookChange(int facilityId, int confirmationId, Duration interval) throws IOException {
+		System.out.println("Service 3: booking change");
 		// 1. send request package to server
 		RequestPackage queryRequest = new RequestPackage(
 				requestId, RequestPackage.SERVICE_CHANGE, facilityId, confirmationId);
 		sendPackage(queryRequest.serialize());
+		// 1.a receive acknowledgment package
+		int statusCode = receiveAckPackage();
+		if(statusCode != StatusCode.ACKNOWLEDGEMENT) {
+			System.out.println("Failed Acknowledgement from server");
+			return;
+		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(interval));
 		// 3. receive reply package from server
-		int statusCode = receiveReplyPackage();
+		statusCode = receiveReplyPackage();
 		// 4. receive data package from server
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
@@ -189,10 +211,16 @@ public class BookingClient {
 		RequestPackage requestPackage = new RequestPackage(
 				requestId, RequestPackage.SERVICE_MONITOR, facilityId, 0);
 		sendPackage(requestPackage.serialize());
+		// 1.a receive acknowledgment package
+		int statusCode = receiveAckPackage();
+		if(statusCode != StatusCode.ACKNOWLEDGEMENT) {
+			System.out.println("Failed Acknowledgement from server");
+			return;
+		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(interval));
 		// 3. receive reply package from server
-		int statusCode = receiveReplyPackage();
+		statusCode = receiveReplyPackage();
 		System.out.println("StatusCode = " + statusCode);
 		// 4. receive data package from server 
 		if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
@@ -211,10 +239,19 @@ public class BookingClient {
 	
 	public static void sendPackage(byte [] buffer) throws IOException {
 		sendBuffer = buffer;
-		sendPacket = new DatagramPacket(sendBuffer, 0, sendBuffer.length, serverAddr, serverPort);
+		//System.out.println("send Package");
+		//DataPackage.printByteArray(buffer);
+		sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, serverAddr, serverPort);
 		socket.send(sendPacket);
 	}
+	
 	public static int receiveReplyPackage() throws IOException {
+		socket.receive(receivePacket);
+		receiveBuffer = receivePacket.getData();
+		return ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
+	}
+	
+	public static int receiveAckPackage() throws IOException {
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
 		return ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();

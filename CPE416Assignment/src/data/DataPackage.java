@@ -107,4 +107,12 @@ public class DataPackage implements Serializable {
 		}
 		return slotList;
 	}
+	
+	public static void printByteArray(byte [] buffer) {
+		StringBuilder sb = new StringBuilder();
+	    for (byte b : buffer) {
+	        sb.append(String.format("%02X ", b));
+	    }
+	    System.out.println(sb.toString());
+	}
 }

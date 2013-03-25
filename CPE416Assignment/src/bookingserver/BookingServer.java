@@ -37,7 +37,7 @@ public class BookingServer {
 			// 1. initialize Facility and Network Socket
 			createFacilities();
 			socket = new DatagramSocket(port);
-			receiveBuffer = new byte[500];
+			receiveBuffer = new byte[50];
 			receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 			// 2. start listening to request
 			while(true) {
@@ -47,7 +47,7 @@ public class BookingServer {
 					// extract client address and port
 				InetAddress clientAddr = receivePacket.getAddress();
 				int clientPort = receivePacket.getPort();
-				byte[] receiveBuffer = receivePacket.getData();
+				receiveBuffer = receivePacket.getData();
 					// extract RequestPackage arguments
 				RequestPackage clientRequest = new RequestPackage(
 						ByteBuffer.wrap(receiveBuffer, 0 , 4).getInt(),
@@ -58,6 +58,25 @@ public class BookingServer {
 				System.out.println("Request from: " + clientAddr.getHostAddress() + ":" + clientPort);
 				System.out.println("Service Id = " + clientRequest.getServiceId());
 				
+				// 2.1a send acknowledgment
+				int ackCode;
+				if(clientRequest.getServiceId() >= RequestPackage.SERVICE_QUERY
+						&& clientRequest.getRequestId() <= RequestPackage.SERVICE_SPEC) {
+					ackCode = StatusCode.ACKNOWLEDGEMENT;
+				} else ackCode = StatusCode.ACKNOWLEDGEMENT_FAILED;
+				
+				ReplyPackage ackPackage = new ReplyPackage(ackCode);
+				BookingServer.replyBuffer = ackPackage.serialize();
+				BookingServer.sendPacket = new DatagramPacket(replyBuffer, replyBuffer.length, clientAddr, clientPort);
+				BookingServer.socket.send(BookingServer.sendPacket);
+				
+				if(ackCode != StatusCode.ACKNOWLEDGEMENT) {
+					System.out.println("Out of band request!");
+					System.out.println("RequestHandler ends");
+					System.out.println("....................");
+					System.out.println();
+					continue;
+				}
 				// 2.2 * semantics: check store request in history
 				
 				// 2.3 execute service
@@ -115,7 +134,7 @@ public class BookingServer {
 				
 				// 2.4 response to client by sending reply and data package
 				BookingServer.sendPacket = new DatagramPacket(
-						replyBuffer, 0, 
+						replyBuffer, 
 						replyBuffer.length, 
 						clientAddr, 
 						clientPort);
@@ -123,7 +142,7 @@ public class BookingServer {
 					// for some service, there is no data package
 				if(dataBuffer != null) {
 					BookingServer.sendPacket = new DatagramPacket(
-							dataBuffer, 0, 
+							dataBuffer,
 							dataBuffer.length, 
 							clientAddr, 
 							clientPort);
