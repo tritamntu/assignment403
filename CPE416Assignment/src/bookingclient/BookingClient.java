@@ -57,11 +57,11 @@ public class BookingClient {
 			}
 			//System.out.println("Client terminates ..");
 
-			socket = new DatagramSocket(clientPort);
+			//socket = new DatagramSocket(clientPort);
 			//serverAddr = InetAddress.getByName("192.168.0.109");
-			serverAddr = InetAddress.getByName("127.0.0.1");
+			//serverAddr = InetAddress.getByName("127.0.0.1");
 
-			interfaceControl();
+			//interfaceControl();
 		
 			
 			
@@ -80,7 +80,7 @@ public class BookingClient {
 //			Duration interval = new Duration(1, 2, 0);
 //			BookingClient.monitor(1, interval);
 	
-			System.out.println("Client terminates ..");
+			//System.out.println("Client terminates ..");
 
 
 		} catch (SocketException | UnknownHostException e) {
