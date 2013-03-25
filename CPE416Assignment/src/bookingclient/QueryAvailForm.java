@@ -3,12 +3,15 @@ package bookingclient;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import booking.TimePoint;
 
 public class QueryAvailForm extends JFrame{
 	
@@ -40,6 +43,17 @@ public class QueryAvailForm extends JFrame{
 	    panel.add(mCombo);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
+	    submitBtn.addActionListener(new ActionListener() {
+	           public void actionPerformed(ActionEvent event) {
+	        	   try {
+					getFormValues();
+					frame.dispose();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	          }
+	       });
 	    panel.add(submitBtn);
 	    cancelBtn = new JButton("Cancel");
 	    cancelBtn.addActionListener(new ActionListener() {
@@ -53,6 +67,19 @@ public class QueryAvailForm extends JFrame{
 		this.setSize(300, 200);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	}
+	
+	private void getFormValues() throws IOException {
+		String fname = (String)this.fCombo.getSelectedItem();
+		int fIndex = BookingClient.getFacilityIndex(fname);
+		String timeDay = (String)this.dCombo.getSelectedItem();
+		int day = BookingClient.getDayIndex(timeDay);
+		String timeHour = (String)this.hCombo.getSelectedItem();
+		int hour = Integer.parseInt(timeHour);
+		String timeMin = (String)this.mCombo.getSelectedItem();
+		int min = Integer.parseInt(timeMin);
+		TimePoint tp = new TimePoint(day, hour, min);
+		BookingClient.queryAvailability(fIndex, tp);
 	}
 	
 	public void updateFList() {

@@ -3,12 +3,16 @@ package bookingclient;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import booking.Duration;
+import booking.TimePoint;
 
 public class BookRequestForm extends JFrame{
 
@@ -54,6 +58,17 @@ public class BookRequestForm extends JFrame{
 	    panel.add(durMinCombo);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
+	    submitBtn.addActionListener(new ActionListener() {
+	           public void actionPerformed(ActionEvent event) {
+	        	   try {
+					getFormValues();
+					frame.dispose();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	          }
+	       });
 	    panel.add(submitBtn);
 	    cancelBtn = new JButton("Cancel");
 	    cancelBtn.addActionListener(new ActionListener() {
@@ -74,6 +89,19 @@ public class BookRequestForm extends JFrame{
 		for(String s: BookingClient.facilityName) {
 			fCombo.addItem(s);
 		}
+	}
+	
+	private void getFormValues() throws IOException {
+		int fIndex = BookingClient.getFacilityIndex((String)fCombo.getSelectedItem());
+		int timeDay = BookingClient.getDayIndex((String)timeDayCombo.getSelectedItem());
+		int timeHour = Integer.parseInt((String)timeHourCombo.getSelectedItem());
+		int timeMin = Integer.parseInt((String)timeMinCombo.getSelectedItem());
+		TimePoint tp = new TimePoint(timeDay, timeHour, timeMin);
+		int drDay = Integer.parseInt((String)durDayCombo.getSelectedItem());
+		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
+		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
+		Duration dr = new Duration(drDay, drHour, drMin);
+		BookingClient.bookRequest(fIndex, tp, dr);
 	}
 	
 	public static void main(String [] args) {

@@ -141,7 +141,7 @@ public class BookingServer {
 					System.out.println("ConfirmId: " + confirmationId);
 					System.out.println("Duration:  " + interval.toString());
 					System.out.println();
-					statusCode = BookingServer.bookChange(clientRequest.getOptionalId(), confirmationId, interval);
+					statusCode = BookingServer.bookChange(clientRequest.getFacilityId(), confirmationId, interval);
 					System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
 					break;
 				case RequestPackage.SERVICE_MONITOR: 

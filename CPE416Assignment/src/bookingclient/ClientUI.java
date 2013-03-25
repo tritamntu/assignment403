@@ -44,7 +44,7 @@ public class ClientUI extends JFrame {
         btnPanel.setLayout(new GridLayout(6,1));
         for(int i = 0; i < btn.length; i++) {
         	switch(i) {
-        	case RequestPackage.SERVICE_QUERY - 1:
+        	case RequestPackage.SERVICE_QUERY:
         		btn[i] = new JButton("Query Availability");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
@@ -53,7 +53,7 @@ public class ClientUI extends JFrame {
         			}
         		});
         		break;
-        	case RequestPackage.SERVICE_BOOK - 1:
+        	case RequestPackage.SERVICE_BOOK:
         		btn[i] = new JButton("Book Facility");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
@@ -62,7 +62,7 @@ public class ClientUI extends JFrame {
         			}
         		});
         		break;
-        	case RequestPackage.SERVICE_CHANGE - 1:
+        	case RequestPackage.SERVICE_CHANGE:
         		btn[i] = new JButton("Change Bookslot");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
@@ -71,7 +71,7 @@ public class ClientUI extends JFrame {
         			}
         		});
         		break;
-        	case RequestPackage.SERVICE_MONITOR - 1:
+        	case RequestPackage.SERVICE_MONITOR:
         		btn[i] = new JButton("Monitor Callback");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
@@ -80,10 +80,10 @@ public class ClientUI extends JFrame {
         			}
         		});
         		break;
-        	case RequestPackage.SERVICE_PROGRAM - 1:
+        	case RequestPackage.SERVICE_PROGRAM:
         		btn[i] = new JButton("Run A Program");
         		break;
-        	case RequestPackage.SERVICE_SPEC - 1:
+        	case RequestPackage.SERVICE_SPEC:
         		btn[i] = new JButton("Query Specification");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {

@@ -104,9 +104,11 @@ public class Facility {
 				return -1;
 			}
 		}
-		slots.add(index, newSlot);
 		this.confirmId ++;
 		newSlot.setConfirmationId(confirmId);
+		System.out.println("ConfirmId = " + confirmId);
+		slots.add(index, newSlot);
+		System.out.println("Slotsize = " + this.slots.size());
 		return confirmId;
 	}
 	
@@ -122,11 +124,15 @@ public class Facility {
 		if(this.slots.size() > 0) {
 			for(int i = 0; i < this.slots.size(); i++) {
 				BookingSlot slot = this.slots.get(i);
+				System.out.println("Slot CID " + slot.getConfirmationId() );
 				if(slot.getConfirmationId() == confirmId) {
 					index = i;
 					break;
 				}
 			}
+		}
+		else {
+			System.out.println("Empty slots " + this.slots.size());
 		}
 		return index;
 	}
@@ -135,9 +141,9 @@ public class Facility {
 		// return -1 if failed
 		// otherwise return the new confirmation id
 		int index = this.searchBookSlot(confirmId);
-		if(index == 1)
+		System.out.println("ConfirmId: " + confirmId + ", Index" + index);
+		if(index == -1)
 			return -1;
-		
 		BookingSlot currSlot = this.removeSlot(index);
 		BookingSlot updateSlot = currSlot.getUpdateSlot(dr);
 		int addResult = this.addSlot(updateSlot);
