@@ -32,15 +32,14 @@ public class BookingClient {
 	static Scanner sc = new Scanner(System.in);
 	
 	public static void main(String [] args) {
-		sendBuffer = new byte[50];
-		receiveBuffer = new byte[50];
+		sendBuffer = new byte[500];
+		receiveBuffer = new byte[500];
 		receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 		try {
 			socket = new DatagramSocket(clientPort);
 			//serverAddr = InetAddress.getByName("192.168.0.109");
 			serverAddr = InetAddress.getByName("127.0.0.1");
-			
-			
+
 			interfaceControl();
 		
 			
@@ -59,7 +58,7 @@ public class BookingClient {
 //			
 //			Duration interval = new Duration(1, 2, 0);
 //			BookingClient.monitor(1, interval);
-			
+	
 			System.out.println("Client terminates ..");
 
 		} catch (SocketException | UnknownHostException e) {
@@ -178,12 +177,11 @@ public class BookingClient {
 		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(tp));
-		// 3. receive reply package to server
-		statusCode = receiveReplyPackage();
-		// 4. receive data package to server
+		// 3. receive data package to server
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
-		TimePoint nextTime = DataPackage.extractTimePoint(receiveBuffer, 0);
+		statusCode = DataPackage.extractInt(receiveBuffer, 0);
+		TimePoint nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
 		if(statusCode == StatusCode.SUCCESS_AVAILABLE) {
 			System.out.println("The Facility is Available.");
 			System.out.println("The next occupied time slot is: " + nextTime.toString());
@@ -208,12 +206,11 @@ public class BookingClient {
 		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(startTime, interval));
-		// 3. receive reply package from server
-		statusCode = receiveReplyPackage();
-		// 4. receive data package from server
+		// 3. receive data package to server
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
-		int confirmId = ByteBuffer.wrap(receiveBuffer).getInt();
+		statusCode = DataPackage.extractInt(receiveBuffer, 0);
+		int confirmId = DataPackage.extractInt(receiveBuffer, 4);
 		if(statusCode == StatusCode.SUCCESS_BOOKING) {
 			System.out.println("Booking was successful, ConfirmationID = " + confirmId);
 		} else {
@@ -237,12 +234,11 @@ public class BookingClient {
 		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(interval));
-		// 3. receive reply package from server
-		statusCode = receiveReplyPackage();
-		// 4. receive data package from server
+		// 3. receive data package to server
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
-		int confirmId = ByteBuffer.wrap(receiveBuffer).getInt();
+		statusCode = DataPackage.extractInt(receiveBuffer, 0);
+		int confirmId = DataPackage.extractInt(receiveBuffer, 4);
 		if(statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
 			System.out.println("Booking change was successful, new ConfirmationID = " + confirmId);
 		} else {
@@ -264,8 +260,10 @@ public class BookingClient {
 		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(interval));
-		// 3. receive reply package from server
-		statusCode = receiveReplyPackage();
+		// 3. receive data package to server
+		socket.receive(receivePacket);
+		receiveBuffer = receivePacket.getData();
+		statusCode = DataPackage.extractInt(receiveBuffer, 0);
 		System.out.println("StatusCode = " + statusCode);
 		// 4. receive data package from server 
 		if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
@@ -273,7 +271,10 @@ public class BookingClient {
 			while(true) {
 				socket.receive(receivePacket);
 				receiveBuffer = receivePacket.getData();
+				System.out.println("Monitor: receive data from server");
+				DataPackage.printByteArray(receiveBuffer);
 				ArrayList<BookingSlot> slotList = DataPackage.extractSlotList(receiveBuffer, 0);
+				System.out.println("Monitor : size = " + slotList.size());
 				for(int i = 0; i < slotList.size(); i++) {
 					BookingSlot slot = slotList.get(i);
 					System.out.println(slot.toString());

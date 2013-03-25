@@ -13,20 +13,43 @@ public class RequestHistory {
 		requestList = new ArrayList<RequestMessage>();
 	}
 	
-	public void addRequestMessage(RequestPackage request, InetAddress clientAddr, int port) 
+	public int addRequestMessage(RequestPackage request, InetAddress clientAddr, int port) 
+			throws UnknownHostException {
+		int index = this.searchRequest(clientAddr, port, request.getRequestId());
+		if(index != -1) { 
+			RequestMessage requestMessage = new RequestMessage(request, clientAddr, port);
+			this.requestList.add(requestMessage);
+		} 
+		return index;
+	}
+	
+	public void addMessage(RequestPackage request, InetAddress clientAddr, int port) 
 			throws UnknownHostException {
 		RequestMessage requestMessage = new RequestMessage(request, clientAddr, port);
 		this.requestList.add(requestMessage);
 	}
 	
-	public boolean searchRequest(InetAddress clientAddr, int port, int requestId) {
+	public void addMessage(RequestMessage requestMessage) {
+		if(requestMessage != null) {
+			this.requestList.add(requestMessage);
+		}
+	}
+	
+	public int searchRequest(InetAddress clientAddr, int port, int requestId) {
+		// return -1 if no duplicate
 		for(int i = 0; i < requestList.size(); i++) {
 			RequestMessage request = this.requestList.get(i);
 			if(request.getClientAddress().equalsIgnoreCase(clientAddr.getHostAddress()) 
 			   && request.getPort() == port
 			   && request.getRequestId() == requestId)
-				return true;
+				return i;
 		}
-		return false;
+		return -1;
 	}
+	
+	public RequestMessage getMessage(int index) {
+		return this.requestList.get(index);
+	}
+	
+	
 }

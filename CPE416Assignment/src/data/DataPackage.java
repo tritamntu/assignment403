@@ -65,6 +65,7 @@ public class DataPackage implements Serializable {
 		int size = slots.size();
 		ByteBuffer byteBuffer = ByteBuffer.allocate(4 + size * 6 * 4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		intBuffer.put(size);
 		for(int i = 0; i < size; i++) {
 			BookingSlot slot = slots.get(i);
 			intBuffer.put(slot.getStartDate());
@@ -82,6 +83,10 @@ public class DataPackage implements Serializable {
 	}
 	
 	// de-serialize methods:
+	public static int extractInt(byte[] buffer, int offset) {
+		return ByteBuffer.wrap(buffer, offset, 4).getInt();
+	}
+	
 	public static TimePoint extractTimePoint(byte[] buffer, int offset) {
 		return new TimePoint(
 				ByteBuffer.wrap(buffer, offset, 4).getInt(), 

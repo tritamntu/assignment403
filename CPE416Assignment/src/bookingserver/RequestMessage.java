@@ -11,6 +11,7 @@ public class RequestMessage {
 	private InetAddress clientAddr;
 	private int clientPort;
 	private Date createdTime;
+	private byte [] dataBuffer;
 	
 	public RequestMessage(RequestPackage request, InetAddress clientAddr, int port) 
 			throws UnknownHostException {
@@ -42,5 +43,18 @@ public class RequestMessage {
 	
 	public long getCreateTime() {
 		return this.createdTime.getTime();
+	}
+	
+	public void setBuffer(byte[] dataBuffer) {
+		this.dataBuffer = new byte[dataBuffer.length];
+		System.arraycopy(dataBuffer, 0, this.dataBuffer, 0, dataBuffer.length);
+	}
+	
+	public byte[] getDataBuffer() {
+		return this.dataBuffer;
+	}
+	
+	public String toString() {
+		return clientAddr.getHostAddress() + ":" + clientPort + ", " + this.request.toString();
 	}
 }
