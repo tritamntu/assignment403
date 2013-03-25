@@ -35,7 +35,7 @@ public class TimePoint {
 			this.min += 60;
 			this.hour--;
 		}
-		if(this.hour > 24) {
+		if(this.hour >= 24) {
 			this.hour -= 24;
 			this.date++;
 		} else if(this.hour < 0) {

@@ -50,17 +50,46 @@ public class BookingClient {
 	
 	public static void main(String [] args) {
 		try {
+
 			BookingClient.init();
 			while(true) {
 				
 			}
 			//System.out.println("Client terminates ..");
+
+			socket = new DatagramSocket(clientPort);
+			//serverAddr = InetAddress.getByName("192.168.0.109");
+			serverAddr = InetAddress.getByName("127.0.0.1");
+
+			interfaceControl();
+		
+			
+			
+//			TimePoint tp = new TimePoint(TimePoint.MONDAY, 10, 1);
+//			requestId = 1;
+//			//queryAvailability(1, tp);
+//			int confirmId1 = bookRequest(1, tp, new Duration(0, 1, 0));
+//			requestId++;
+//			tp = new TimePoint(TimePoint.MONDAY, 12, 1);
+//			int confirmId2 = bookRequest(1, tp, new Duration(0, 1, 0));
+//			requestId++;
+//			if(confirmId1 != -1) {
+//				bookChange(1, confirmId1, new Duration(0, 2, 0));
+//			}
+//			
+//			Duration interval = new Duration(1, 2, 0);
+//			BookingClient.monitor(1, interval);
+	
+			System.out.println("Client terminates ..");
+
+
 		} catch (SocketException | UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
 	
+
 	public static void init() 
 			throws SocketException, UnknownHostException {
 		System.out.println("Init");
@@ -88,6 +117,98 @@ public class BookingClient {
 		System.out.println("3. Change a booking");
 		System.out.println("4. Monitor the availability of a facility");
 		System.out.println("5. Exit");
+	}
+	
+	public static void interfaceControl() throws IOException
+	{
+		// The input format complies with the requirement stated in question
+		// 
+		int option;
+		do
+		{
+			System.out.println("\nPlease enter an option from 1 to 5");
+			System.out.println("1. Query availablity of a facility");
+			System.out.println("2. Book a facility");
+			System.out.println("3. Change a booking");
+			System.out.println("4. Monitor the availability of a facility");
+			System.out.println("5. Exit");
+			
+			option= sc.nextInt();
+			sc.nextLine(); // to remove the \n in buffer after nextInt
+			
+			String facilityName;
+			String days;
+			TimePoint startTime, endTime;
+			Duration duration;
+			char AP;
+			int confID;
+			
+			switch(option){
+			
+			case 1: 
+				System.out.print("Enter facility Name: " );
+				facilityName = sc.nextLine().trim();
+				System.out.print("Enter days as in MONDAY TUESDAY: " );
+				days= sc.nextLine().trim().toUpperCase();
+				//queryAvailability();
+				break;
+				
+			case 2:
+				System.out.print("Enter facility Name: " );
+				facilityName = sc.nextLine().trim();
+				System.out.println("Enter start time" );
+				startTime= enterTime();
+				System.out.println("Enter end time" );
+				endTime= enterTime();
+				//bookRequest();
+				break;
+				
+			case 3:
+				System.out.print("Enter facility Name: " );
+				facilityName = sc.nextLine().trim();
+				System.out.print("Enter the confirmation ID: " );
+				confID= Integer.parseInt(sc.nextLine().trim());
+				System.out.print("Enter the Advance or Postpone time [A/P]: " );
+				AP = sc.nextLine().trim().charAt(0);
+				duration= enterDuration();
+				// bookChange();
+				break;
+				
+			case 4: 
+				System.out.print("Enter facility Name: " );
+				facilityName = sc.nextLine().trim();
+				System.out.println("Enter monitor interval" );
+				duration= enterDuration();
+				//monitor(facilityName, duration);
+				break;
+			}// end switch		
+		}while(option!=5);	
+	}
+	
+	public static TimePoint enterTime()
+	{
+		int day, hour, min;
+		System.out.println("1. Monday\n2. Tuesday\n3. Wednesday\n4. Thurday\n5. Friday\n6. Saturday\n7. Sunday");
+		System.out.print("Select a day [1 to 7]: ");
+		day= Integer.parseInt(sc.nextLine().trim())-1;
+		System.out.print("Enter hour [0 to 23]: ");
+		hour=Integer.parseInt(sc.nextLine().trim());
+		System.out.print("Enter mins [0 to 59]: " );
+		min= Integer.parseInt(sc.nextLine().trim());
+		return new TimePoint(day, hour, min);
+	}
+	
+	public static Duration enterDuration()
+	{
+		int day, hour, min;
+		System.out.print("Select number of days [1 to 7]: ");
+		day= Integer.parseInt(sc.nextLine().trim())-1;
+		System.out.print("Enter hour [0 to 23]: ");
+		hour=Integer.parseInt(sc.nextLine().trim());
+		System.out.print("Enter mins [0 to 59]: " );
+		min= Integer.parseInt(sc.nextLine().trim());
+		return new Duration(day,hour,min);
+
 	}
 	
 	// service 1 query Availability
