@@ -81,7 +81,7 @@ public class ClientUI extends JFrame {
         		});
         		break;
         	case RequestPackage.SERVICE_PROGRAM:
-        		btn[i] = new JButton("Run A Program");
+        		btn[i] = new JButton("Get Quotes of The Day");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
         				programForm = new RunProgramForm();
@@ -90,7 +90,7 @@ public class ClientUI extends JFrame {
         		});
         		break;
         	case RequestPackage.SERVICE_SPEC:
-        		btn[i] = new JButton("Query Specification");
+        		btn[i] = new JButton("Connect to Server");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
       	        	   try {
@@ -104,8 +104,10 @@ public class ClientUI extends JFrame {
          		});
         		break;
         	}
-        	btnPanel.add(btn[i]);
         }
+        btnPanel.add(btn[5]);
+        for(int i = 0; i < 5; i++)
+        	btnPanel.add(btn[i]);
         this.add(btnPanel, BorderLayout.WEST);
         // set property
 		this.setTitle("Client User Interface");
