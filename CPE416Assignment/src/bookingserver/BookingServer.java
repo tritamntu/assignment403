@@ -67,12 +67,13 @@ public class BookingServer {
 				
 				System.out.println("Request from: " + clientAddr.getHostAddress() + ":" + clientPort);
 				System.out.println("Service Id = " + clientRequest.getServiceId());
+				System.out.println("Facility Id = " + clientRequest.getFacilityId());
 				System.out.println("Request Id = " + clientRequest.getRequestId());
 				// 2.2 check if service can be served or not
 				int ackCode;
 				RequestMessage message = null;
-				if(clientRequest.getServiceId() >= RequestPackage.SERVICE_QUERY
-						&& clientRequest.getServiceId() <= RequestPackage.SERVICE_SPEC) {
+				if(clientRequest.getServiceId() >= RequestPackage.SERVICE_SPEC
+						&& clientRequest.getServiceId() <= RequestPackage.SERVICE_INSERT) {
 					ackCode = StatusCode.ACKNOWLEDGEMENT;
 				} else { 
 					ackCode = StatusCode.ACKNOWLEDGEMENT_FAILED;
@@ -127,7 +128,7 @@ public class BookingServer {
 					System.out.println("\tStart time: " + startTime.toString());
 					System.out.println("\tDuration: " + interval.toString());
 					System.out.println("Facility id: " + clientRequest.getFacilityId());
-					statusCode = BookingServer.bookRequest(clientRequest.getFacilityId(), startTime, interval);
+					statusCode = BookingServer.bookRequest(clientRequest.getFacilityId(), startTime, interval, clientAddr, clientPort);
 					if(clientRequest.getFacilityId() >= 0 && clientRequest.getFacilityId() < fList.length)
 						System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
 					break;
@@ -170,6 +171,12 @@ public class BookingServer {
 				case RequestPackage.SERVICE_SPEC: 
 					// get facility names
 					BookingServer.queryFacilityList();
+					break;
+				case RequestPackage.SERVICE_REMOVE_ALL:
+					BookingServer.removeAllSlots(clientRequest.getFacilityId(), clientAddr, clientPort);
+					break;
+				case RequestPackage.SERVICE_INSERT:
+					
 					break;
 				} } catch (SocketTimeoutException e) {
 					// Timeout: server can't receive data package from client, execution terminates
@@ -224,7 +231,7 @@ public class BookingServer {
 		TimePoint nextTime = null;
 		// 1. check availability and status code
 		boolean available = false;
-		if(facilityId > 0 && facilityId < fList.length) {
+		if(facilityId >= 0 && facilityId < fList.length) {
 			available = fList[facilityId].queryAvailibility(startTime);
 			nextTime = fList[facilityId].getNextTime(startTime);
 		} else {
@@ -245,12 +252,13 @@ public class BookingServer {
 	
 	// service 2 bookRequest 
 	public static int bookRequest(
-			int facilityId, TimePoint startTime, Duration interval) {
+			int facilityId, TimePoint startTime, Duration interval, InetAddress clientAddr, int clientPort) 
+					throws UnknownHostException {
 		// 1. add slot to schedule
 		System.out.println("Start Service 2: Book Request");
 		int confirmId = -1;
-		if(facilityId > 0 && facilityId < fList.length) {
-			confirmId = fList[facilityId].addSlot(new BookingSlot(startTime, interval));
+		if(facilityId >= 0 && facilityId < fList.length) {
+			confirmId = fList[facilityId].addSlot(new BookingSlot(startTime, interval, clientAddr, clientPort));
 		} else {
 			confirmId = -1;
 		}
@@ -271,7 +279,7 @@ public class BookingServer {
 		System.out.println("Start Service 3: Booking Change");
 		int statusCode = -1;
 		int confirmId = -1;
-		if(facilityId > 0 && facilityId < fList.length) {
+		if(facilityId >= 0 && facilityId < fList.length) {
 			confirmId = fList[facilityId].bookChange(confirmationId, interval);
 		} else {
 			confirmId = -1;
@@ -292,7 +300,7 @@ public class BookingServer {
 		System.out.println("Start Service 4: Monitor");
 		int statusCode = StatusCode.SUCCESS_ADD_MONITOR;
 		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, interval);
-		if(facilityId > 0 && facilityId < fList.length) {
+		if(facilityId >= 0 && facilityId < fList.length) {
 			fList[facilityId].addMonitorClient(newClient);
 		} else {
 			statusCode = StatusCode.FACILITY_NOT_FOUND;
@@ -373,6 +381,16 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	public static int removeAllSlots(int facilityId, InetAddress clientAddr, int clientPort) {
+		int statusCode = StatusCode.FACILITY_NOT_FOUND;
+		if(facilityId < fList.length && facilityId >= 0) {
+			fList[facilityId].removeAllSlot(clientAddr, clientPort);
+			statusCode = StatusCode.SUCCESS_REMOVE;
+		} 
+		ReplyPackage rp = new ReplyPackage(statusCode);
+		dataBuffer = rp.serialize();
+		return statusCode;
+	}
 	
 	public static String quote(int output){
 		String[] quotes = new String [10];

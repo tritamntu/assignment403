@@ -19,12 +19,14 @@ import data.RequestPackage;
 public class ClientUI extends JFrame {
 	
 	JTextArea textArea;
-	JButton [] btn = new JButton[6];
+	JButton [] btn = new JButton[7];
 	BookChangeForm bookChangeForm;
 	BookRequestForm bookRequestForm;
 	MonitorCallForm monitorCallForm;
 	QueryAvailForm queryAvailForm;
 	RunProgramForm programForm;
+	RemoveSlotForm removeForm;
+	
 	public ClientUI() {
 		initUI();
 	}
@@ -41,7 +43,7 @@ public class ClientUI extends JFrame {
         this.add( new JScrollPane( this.textArea ), BorderLayout.CENTER);
         // add button list
         JPanel btnPanel = new JPanel();
-        btnPanel.setLayout(new GridLayout(6,1));
+        btnPanel.setLayout(new GridLayout(7,1));
         for(int i = 0; i < btn.length; i++) {
         	switch(i) {
         	case RequestPackage.SERVICE_QUERY:
@@ -103,11 +105,18 @@ public class ClientUI extends JFrame {
          			}
          		});
         		break;
+        	case RequestPackage.SERVICE_REMOVE_ALL:
+        		btn[i] = new JButton("Remove All Slot");
+        		btn[i].addActionListener(new ActionListener() {
+        			public void actionPerformed(ActionEvent event) {
+        				removeForm = new RemoveSlotForm();
+        				removeForm.setVisible(true);
+         			}
+         		});
+        		break;
         	}
-        }
-        btnPanel.add(btn[5]);
-        for(int i = 0; i < 5; i++)
         	btnPanel.add(btn[i]);
+        }
         this.add(btnPanel, BorderLayout.WEST);
         // set property
 		this.setTitle("Client User Interface");

@@ -1,6 +1,9 @@
 package booking;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Facility {
 	private int id;
@@ -97,6 +100,7 @@ public class Facility {
 		}
 		return nextTime;
 	}
+	
 	// add method
 	public int addSlot(BookingSlot newSlot) {
 		int index = 0;
@@ -139,6 +143,39 @@ public class Facility {
 		if(this.slots.size() == 0 || this.slots.size() > 0 && index >= this.slots.size())
 			return null;
 		return this.slots.remove(index);
+	}
+	
+	public BookingSlot removeSlot(InetAddress clientAddr, int clientPort, int confirmationId) {
+		int i;
+		for(i = 0; i < this.slots.size(); i++) {
+			BookingSlot slot = this.slots.get(i);
+			if(slot.compareClient(clientAddr, clientPort, confirmationId)) {
+				return this.slots.remove(i);
+			}
+		}
+		return null;
+		
+	}
+	
+	public void removeAllSlot(InetAddress clientAddr, int clientPort) {
+		System.out.println("Size = " + this.slots.size());
+		/*
+		List<Integer> toRemove = new ArrayList<Integer>();
+		for(int i = 0; i < this.slots.size(); i++) {
+			BookingSlot slot = this.slots.get(i);
+			if(slot.compareClient(clientAddr, clientPort)) {
+				System.out.println("Remove Index i " + i);
+				toRemove.add(i);
+			}
+		}*/
+		
+		for (Iterator i = slots.iterator(); i.hasNext(); ) {
+		    BookingSlot slot = (BookingSlot)i.next();
+		    if(slot.compareClient(clientAddr, clientPort))
+		    	i.remove();
+		}
+		//this.slots.removeAll(toRemove);
+		System.out.println("Size = " + this.slots.size());
 	}
 	
 	// search booking slot by confirmation id

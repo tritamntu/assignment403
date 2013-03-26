@@ -290,7 +290,7 @@ public class BookingClient {
 		dataTimeoutCount = 0;
 		window.appendTextLine("End Request .................");
 		window.appendTextLine("");
-		//requestId++;
+		requestId++;
 		return statusCode;
 	}
 	
@@ -329,6 +329,12 @@ public class BookingClient {
 			break;
 		case RequestPackage.SERVICE_SPEC:
 			sendBuffer = null;
+			break;
+		case RequestPackage.SERVICE_REMOVE_ALL:
+			sendBuffer = null;
+			break;
+		case RequestPackage.SERVICE_INSERT:
+			//sendBuffer = null;
 			break;
 		}
 		
@@ -394,7 +400,7 @@ public class BookingClient {
 		case RequestPackage.SERVICE_MONITOR:
 			if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
 				window.appendTextLine("Monitor: successful continue receive");
-			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE) {
 				window.appendTextLine("Monitor: Not Available Facility");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				window.appendTextLine("Duplicate Request: Please Send a New Request");
@@ -433,6 +439,24 @@ public class BookingClient {
 				}
 			}
 			break;
+		case RequestPackage.SERVICE_REMOVE_ALL:
+			if(statusCode == StatusCode.SUCCESS_REMOVE) {
+				window.appendTextLine("Remove: all slots booked by this client have been removed");
+			} else if(statusCode == StatusCode.FACILITY_NOT_FOUND) {
+				window.appendTextLine("Remove: Error of not found facility");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				window.appendTextLine("Duplicate : All records have been removed");
+			}
+			break;
+		case RequestPackage.SERVICE_INSERT:
+			if(statusCode == StatusCode.SUCCESS_AVAILABLE) {
+				
+			} else if(statusCode == StatusCode.SERVER_NOT_AVAILABLE) {
+				
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				
+			}
+			break;
 		}
 	}
 	
@@ -451,6 +475,10 @@ public class BookingClient {
 			return "Service 5: Get A Quote";
 		case RequestPackage.SERVICE_SPEC:
 			return "Service 6: Query Facility List";
+		case RequestPackage.SERVICE_REMOVE_ALL:
+			return "Service 7: Remove All Slots";
+		case RequestPackage.SERVICE_INSERT:
+			return "Service 8: Insert Booking Slot";
 		}
 		return str;
 	}

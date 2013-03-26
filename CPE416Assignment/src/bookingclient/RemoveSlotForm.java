@@ -11,27 +11,25 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import data.RequestPackage;
 
-public class RunProgramForm extends JFrame {
+public class RemoveSlotForm extends JFrame {
 	
 	JButton submitBtn;
 	JButton cancelBtn;
 	JFrame frame = this;
-	JComboBox nCombo;
+	JComboBox fCombo;
 	
-	public RunProgramForm() {
+	public RemoveSlotForm() {
 		// create content panel
 		JPanel panel = new JPanel();
 		this.getContentPane().add(panel);
 	    panel.setLayout(new GridLayout(2,2));
 	    // add components:
-	    panel.add(new JLabel("Your Lucky Number: "));
-	    String [] strAr = {"0","1","2","3","4","5","6","7","8","9"};
-	    nCombo = new JComboBox(strAr);
-	    panel.add(nCombo);
+	    panel.add(new JLabel("Facility Name : "));
+	    fCombo = new JComboBox(BookingClient.facilityName);
+	    panel.add(fCombo);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
 	    panel.add(submitBtn);
@@ -61,7 +59,8 @@ public class RunProgramForm extends JFrame {
 	}
 	
 	public void getFormValues() throws SocketException {
-		int optionalId = Integer.parseInt((String)nCombo.getSelectedItem());
-		BookingClient.sendRequest(RequestPackage.SERVICE_PROGRAM, 0, optionalId, null, null);
+		int fIndex = BookingClient.getFacilityIndex((String)fCombo.getSelectedItem());
+		BookingClient.sendRequest(RequestPackage.SERVICE_REMOVE_ALL, fIndex, 0, null, null);
 	}
+	
 }
