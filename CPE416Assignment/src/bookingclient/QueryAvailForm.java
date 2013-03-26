@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import data.RequestPackage;
+
 import booking.TimePoint;
 
 public class QueryAvailForm extends JFrame{
@@ -79,7 +81,7 @@ public class QueryAvailForm extends JFrame{
 		String timeMin = (String)this.mCombo.getSelectedItem();
 		int min = Integer.parseInt(timeMin);
 		TimePoint tp = new TimePoint(day, hour, min);
-		BookingClient.queryAvailability(fIndex, tp);
+		BookingClient.sendRequest(RequestPackage.SERVICE_QUERY, fIndex, 0, tp, null);
 	}
 	
 	public void updateFList() {

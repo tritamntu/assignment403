@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import data.RequestPackage;
+
 import booking.Duration;
 import booking.TimePoint;
 
@@ -101,7 +103,7 @@ public class BookRequestForm extends JFrame{
 		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
 		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
 		Duration dr = new Duration(drDay, drHour, drMin);
-		BookingClient.bookRequest(fIndex, tp, dr);
+		BookingClient.sendRequest(RequestPackage.SERVICE_BOOK, fIndex, 0, tp, dr);
 	}
 	
 	public static void main(String [] args) {

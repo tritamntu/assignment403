@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import data.RequestPackage;
+
 import booking.Duration;
 import booking.TimePoint;
 
@@ -54,6 +56,7 @@ public class BookChangeForm extends JFrame{
 	    submitBtn.addActionListener(new ActionListener() {
 	           public void actionPerformed(ActionEvent event) {
 	        	   try {
+	        		System.out.println("Book Change");
 					getFormValues();
 					frame.dispose();
 				} catch (IOException e) {
@@ -78,12 +81,15 @@ public class BookChangeForm extends JFrame{
 	
 	public void getFormValues() throws IOException {
 		int fIndex = BookingClient.getFacilityIndex((String)fCombo.getSelectedItem());
-		int cIndex = Integer.parseInt(cText.getText());
+		int cIndex = -1;
+		if(!cText.getText().equals("")) {
+			cIndex = Integer.parseInt(cText.getText());
+		}
 		int drDay = Integer.parseInt((String)durDayCombo.getSelectedItem());
 		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
 		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
 		Duration dr = new Duration(drDay, drHour, drMin);
-		BookingClient.bookChange(fIndex, cIndex, dr);
+		BookingClient.sendRequest(RequestPackage.SERVICE_CHANGE, fIndex, cIndex, null, dr);
 	}
 	
 	public static void main(String [] args) {

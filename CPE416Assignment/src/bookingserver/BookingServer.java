@@ -38,6 +38,8 @@ public class BookingServer {
 	static byte [] dataBuffer;
 	static RequestHistory history;
 	static int sematicsCode = BookingServer.AT_LEAST_ONCE;
+	static int lastValue = -1;
+	static int lastService = -1;
 	
 	public static void main(String [] args) {
 		try {
@@ -70,7 +72,7 @@ public class BookingServer {
 				// 2.2 send acknowledgment
 				int ackCode;
 				if(clientRequest.getServiceId() >= RequestPackage.SERVICE_QUERY
-						&& clientRequest.getRequestId() <= RequestPackage.SERVICE_SPEC) {
+						&& clientRequest.getServiceId() <= RequestPackage.SERVICE_SPEC) {
 					ackCode = StatusCode.ACKNOWLEDGEMENT;
 				} else ackCode = StatusCode.ACKNOWLEDGEMENT_FAILED;
 				
@@ -153,13 +155,21 @@ public class BookingServer {
 							clientAddr, clientPort, interval);
 					break;
 				case RequestPackage.SERVICE_PROGRAM: 
-					// service 5 query specification
-					BookingServer.runProgram(
-							clientRequest.getFacilityId(), 
-							clientRequest.getOptionalId());
+					// service 5 run a program
+					System.out.println("Before invoking the Service_program");
+					System.out.println("last Service: " + lastService);
+					System.out.println("last Value: " + lastValue);
+					if (clientRequest.getServiceId() == lastService && clientRequest.getOptionalId() ==lastValue){
+						System.out.println("case 1: repeated service and number");
+						runProgram(clientRequest.getOptionalId(), true);
+					}
+					else{
+						System.out.println("case 2: NOT repeated service and number");
+						runProgram(clientRequest.getOptionalId(), false);						
+					}
 					break;
 				case RequestPackage.SERVICE_SPEC: 
-					// service 6 run a program
+					// get facility names
 					BookingServer.queryFacilityList();
 					break;
 				} } catch (SocketTimeoutException e) {
@@ -316,17 +326,48 @@ public class BookingServer {
 		return statusCode;
 	}
 	
-	public static int runProgram(int facilityId, int applicationId) {
-		// 1. get the program id
+	public static int runProgram(int input, boolean runAgain) 
+			throws UnsupportedEncodingException {
+		System.out.println("Start Service 6: Quote of the day");
+		String str = "nothing";
 		int statusCode = StatusCode.FACILITY_NOT_FOUND;
-		if(facilityId == 3 || facilityId == 4) {
-			statusCode = StatusCode.SUCCESS_PROGRAM;
-			System.out.println("Application Id " + applicationId + " is executed.");
+		replyBuffer = (new ReplyPackage(statusCode)).serialize();
+		if (input>9 ||input<0){
+			str = "Please make sure that your number is between 0 an 9";
 		}
-		ReplyPackage replyPackage = new ReplyPackage(statusCode);
-		// 2. setup data buffer to client
-		dataBuffer = replyPackage.serialize(null);
+		else if(input<9 && input>0){
+			int output;
+			if (runAgain == true){
+				lastValue++;
+				output = lastValue;
+			}
+			else{
+				output = input;
+				lastValue = output;
+			}
+			str = quote(output);
+		}
+		statusCode = StatusCode.SUCCESS_PROGRAM; 
+		ReplyPackage rp = new ReplyPackage(statusCode);
+		dataBuffer = rp.serialize(DataPackage.serialize(str));
 		return statusCode;
 	}
 	
+	
+	public static String quote(int output){
+		String[] quotes = new String [10];
+		quotes[0] = "Quote of the day: A day without sunshine is like, you know, night.";
+		quotes[1] = "Quote of the day: Oh, love will make a dog howl in rhyme";
+		quotes[2] = "Quote of the day: Do not take life too seriously. You will never get out of it alive.";
+		quotes[3] = "Quote of the day: Weather forecast for tonight: dark.";
+		quotes[4] = "Quote of the day: I found there was only one way to look thin: hang out with fat people.";
+		quotes[5] = "Quote of the day: I intend to live forever. So far, so good.";
+		quotes[6] = "Quote of the day: All generalizations are false, including this one.";
+		quotes[7] = "Quote of the day: Why do they call it rush hour when nothing moves?";
+		quotes[8] = "Quote of the day: They say marriages are made in Heaven. But so is thunder and lightning.";
+		quotes[9] = "Quote of the day: If you have a secret, people will sit a little bit closer.";
+		return quotes[output];
+
+	}
+
 }

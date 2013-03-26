@@ -2,6 +2,8 @@ package bookingclient;
 
 import java.io.IOException;
 
+import data.RequestPackage;
+
 import booking.Duration;
 
 public class MonitorThread extends Thread{
@@ -20,7 +22,7 @@ public class MonitorThread extends Thread{
 	
 	public void run() {
 		try {
-			BookingClient.monitor(facilityId, dr);
+			BookingClient.sendRequest(RequestPackage.SERVICE_MONITOR, facilityId, 0, null, dr);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

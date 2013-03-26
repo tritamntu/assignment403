@@ -24,7 +24,7 @@ public class ClientUI extends JFrame {
 	BookRequestForm bookRequestForm;
 	MonitorCallForm monitorCallForm;
 	QueryAvailForm queryAvailForm;
-	
+	RunProgramForm programForm;
 	public ClientUI() {
 		initUI();
 	}
@@ -82,13 +82,19 @@ public class ClientUI extends JFrame {
         		break;
         	case RequestPackage.SERVICE_PROGRAM:
         		btn[i] = new JButton("Run A Program");
+        		btn[i].addActionListener(new ActionListener() {
+        			public void actionPerformed(ActionEvent event) {
+        				programForm = new RunProgramForm();
+        				programForm.setVisible(true);
+        			}
+        		});
         		break;
         	case RequestPackage.SERVICE_SPEC:
         		btn[i] = new JButton("Query Specification");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
       	        	   try {
-						BookingClient.queryFacilityName();
+						BookingClient.sendRequest(RequestPackage.SERVICE_SPEC, 0, 0, null, null);
 						//updateFacilityList();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block

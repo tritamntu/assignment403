@@ -14,4 +14,5 @@ public class StatusCode {
 	public static final int ACKNOWLEDGEMENT = 8;
 	public static final int ACKNOWLEDGEMENT_FAILED = 9;
 	public static final int REQUEST_DUPLICATE = 10;
+	public static final int SERVER_NOT_AVAILABLE = 11;
 }
