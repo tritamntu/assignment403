@@ -3,6 +3,7 @@ package bookingclient;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -10,7 +11,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import booking.Duration;
+
 public class MonitorCallForm extends JFrame{
+	
+	private static final int MONITOR = 1;
+	private static final int CANCEL = 2;
 	
 	JButton submitBtn;
 	JButton cancelBtn;
@@ -19,8 +25,10 @@ public class MonitorCallForm extends JFrame{
 	JComboBox durDayCombo;
 	JComboBox durHourCombo;
 	JComboBox durMinCombo;
+	int status;
 	
 	public MonitorCallForm() {
+		status = MonitorCallForm.MONITOR;
 		// create content panel
 		JPanel panel = new JPanel();
 		this.getContentPane().add(panel);
@@ -41,10 +49,21 @@ public class MonitorCallForm extends JFrame{
 	    panel.add(durMinCombo);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
+	    submitBtn.addActionListener(new ActionListener() {
+	           public void actionPerformed(ActionEvent event) {
+	        	   try {
+					getFormValues();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	          }
+	       });
 	    panel.add(submitBtn);
 	    cancelBtn = new JButton("Cancel");
 	    cancelBtn.addActionListener(new ActionListener() {
 	           public void actionPerformed(ActionEvent event) {
+	        	   BookingClient.stopMonitor = true;
 	        	   frame.dispose();
 	          }
 	       });
@@ -62,6 +81,16 @@ public class MonitorCallForm extends JFrame{
 			fCombo.addItem(s);
 		}
 	}
+	
+	public void getFormValues() throws IOException {
+		int fIndex = BookingClient.getFacilityIndex((String)fCombo.getSelectedItem());
+		int drDay = Integer.parseInt((String)durDayCombo.getSelectedItem());
+		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
+		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
+		MonitorThread thread = new MonitorThread(fIndex, drDay, drHour, drMin);
+		thread.start();
+	}
+	
 	
 	public static void main(String [] args) {
 		MonitorCallForm form = new MonitorCallForm();

@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class BookingClient {
 	static Scanner sc = new Scanner(System.in);
 	// user interface
 	static ClientUI window;
+	static boolean stopMonitor;
 	
 	public static void main(String [] args) {
 		try {
@@ -304,17 +306,17 @@ public class BookingClient {
 		return statusCode;
 	}
 	
-	public static void monitor(int facilityId, Duration interval) throws IOException {
-		System.out.println("Monitor: send monitor request");
+	public static int monitor(int facilityId, Duration interval) throws IOException {
 		// 1. send request package to server
+		window.appendTextLine("Service Request: Monitor Callback on Facility " + facilityId);
 		RequestPackage requestPackage = new RequestPackage(
 				requestId, RequestPackage.SERVICE_MONITOR, facilityId, 0);
 		sendPackage(requestPackage.serialize());
 		// 1.a receive acknowledgment package
 		int statusCode = receiveAckPackage();
 		if(statusCode != StatusCode.ACKNOWLEDGEMENT) {
-			System.out.println("Failed Acknowledgement from server");
-			return;
+			window.appendTextLine("Failed Acknowledgment From Server");
+			return statusCode;
 		} 
 		// 2. send data package to server
 		sendPackage(DataPackage.serialize(interval));
@@ -322,23 +324,31 @@ public class BookingClient {
 		socket.receive(receivePacket);
 		receiveBuffer = receivePacket.getData();
 		statusCode = DataPackage.extractInt(receiveBuffer, 0);
-		System.out.println("StatusCode = " + statusCode);
 		// 4. receive data package from server 
 		if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
-			System.out.println("Monitor: successful continue receive");
-			while(true) {
+			window.appendTextLine("Monitor: successful continue receive");
+			stopMonitor = false;
+			while(!stopMonitor) {
+				socket.setSoTimeout(500);
+				try {
 				socket.receive(receivePacket);
 				receiveBuffer = receivePacket.getData();
-				System.out.println("Monitor: receive data from server");
+				window.appendTextLine("Monitor: receive data from server");
 				DataPackage.printByteArray(receiveBuffer);
 				ArrayList<BookingSlot> slotList = DataPackage.extractSlotList(receiveBuffer, 0);
-				System.out.println("Monitor : size = " + slotList.size());
+				window.appendTextLine("Monitor : size = " + slotList.size());
 				for(int i = 0; i < slotList.size(); i++) {
 					BookingSlot slot = slotList.get(i);
-					System.out.println(slot.toString());
+					window.appendTextLine(slot.toString());
+				}
+				} catch (SocketTimeoutException e ) {
+					continue;
 				}
 			}
 		}
+		window.appendTextLine("End Request .................");
+		window.appendTextLine("");
+		return statusCode;
 	}
 	
 	public static int queryFacilityName() throws IOException {
