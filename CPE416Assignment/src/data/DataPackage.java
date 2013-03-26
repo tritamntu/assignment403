@@ -88,7 +88,7 @@ public class DataPackage implements Serializable {
 		for(int i = 0; i < strAr.length -1; i++) {
 			str += strAr[i] + "\n";
 		}
-		str += strAr[strAr.length -1];
+		str += strAr[strAr.length -1] + "!!!";
 		return DataPackage.serialize(str);
 	}
 	
@@ -125,8 +125,14 @@ public class DataPackage implements Serializable {
 	
 	public static String[] extractStringList(byte[] buffer, int offset) {
 		String str = new String(buffer, offset, buffer.length - offset, StandardCharsets.US_ASCII);
-		String [] strAr = str.split("\n");
+		String [] strAr = str.split("!!!")[0].split("\n");
 		return strAr;
+	}
+	
+	public static String extractString(byte[] buffer, int offset) {
+		String str = new String(buffer, offset, buffer.length - offset, StandardCharsets.US_ASCII);
+		str = str.split("!!!")[0];
+		return str;
 	}
 	
 	public static void printByteArray(byte [] buffer) {

@@ -227,16 +227,17 @@ public class BookingClient {
 		Boolean sending = true;
 		dataTimeoutCount = 0;
 		socket.setSoTimeout(800);
-		requestId++;
-		int statusCode = StatusCode.FACILITY_NOT_FOUND;
+		int statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		while(sending && dataTimeoutCount <= BookingClient.MAX_TIMEOUT) {
 			dataTimeoutCount++;
+			statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 			try {
 				window.appendTextLine(BookingClient.getServiceName(serviceId));
 				// 1. send request package
 				sendRequestPackage(serviceId, facilityId, optionalId);
 				// 2. receive acknowledgment package
 				statusCode = receiveAckPackage();
+				System.out.println("StatusCode " + statusCode + ";");
 				if(statusCode == StatusCode.ACKNOWLEDGEMENT_FAILED) {
 					window.appendTextLine("Failed Acknowedgment From Server");
 					window.appendTextLine("End Request .................");
@@ -244,12 +245,15 @@ public class BookingClient {
 					return statusCode;
 				}
 				// 3. send data package
-				sendDataPackage(serviceId, tp, dr);
-				// 4. receive data package
-				socket.receive(receivePacket);
-				receiveBuffer = receivePacket.getData();
-				statusCode = ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
+				if(statusCode != StatusCode.REQUEST_DUPLICATE) {
+					sendDataPackage(serviceId, tp, dr);
+				// 4. receive data package if the request is not a duplicate
+					socket.receive(receivePacket);
+					receiveBuffer = receivePacket.getData();
+					statusCode = ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
+				}
 				processDataPackage(serviceId, statusCode);
+				System.out.println("StatusCode " + statusCode + ";");
 				if(serviceId == RequestPackage.SERVICE_MONITOR) {
 					// if the service is monitor call back, continue to read data
 					stopMonitor = false;
@@ -283,8 +287,10 @@ public class BookingClient {
 			statusCode = StatusCode.SERVER_NOT_AVAILABLE;
 			window.appendTextLine("Server Not Available, Try Again Later");
 		}
+		dataTimeoutCount = 0;
 		window.appendTextLine("End Request .................");
 		window.appendTextLine("");
+		//requestId++;
 		return statusCode;
 	}
 	
@@ -337,46 +343,90 @@ public class BookingClient {
 		TimePoint nextTime = null;
 		switch(serviceId) {
 		case RequestPackage.SERVICE_QUERY:
-			nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
+			
 			if(statusCode == StatusCode.SUCCESS_AVAILABLE) {
+				nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
 				window.appendTextLine("The Facility is Available.");
 				window.appendTextLine("The next occupied time slot is: " + nextTime.toString());
-			} else {
+			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE){
+				nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
 				window.appendTextLine("The Facility is not Available.");
 				window.appendTextLine("The next available time slot is: " + nextTime.toString());
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				nextTime = DataPackage.extractTimePoint(receiveBuffer, 8);
+				window.appendTextLine("Duplicate Request: The Facility's availability is unknown.");
+				window.appendTextLine("The next available/occupied time slot is: " + nextTime.toString());
 			}
 			break;
+			
 		case RequestPackage.SERVICE_BOOK:
-			confirmId = DataPackage.extractInt(receiveBuffer, 4);
+			
 			if(statusCode == StatusCode.SUCCESS_BOOKING) {
+				confirmId = DataPackage.extractInt(receiveBuffer, 4);
 				window.appendTextLine("Booking was successful, ConfirmationID = " + confirmId);
-			} else {
+			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE){
 				window.appendTextLine("Booking was failed due to time violation with other booking slots!");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				confirmId = DataPackage.extractInt(receiveBuffer, 8);
+				window.appendText("Duplicate Request: ");
+				if(confirmId > 0)
+					window.appendTextLine("Booking was successful, ConfirmationID = " + confirmId);
+				else window.appendTextLine("Boooking was unsuccessful.");
 			}
 			break;
+			
 		case RequestPackage.SERVICE_CHANGE:
-			confirmId = DataPackage.extractInt(receiveBuffer, 4);
+			
 			if(statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
+				confirmId = DataPackage.extractInt(receiveBuffer, 4);
 				window.appendTextLine("Booking change was successful, new ConfirmationID = " + confirmId);
-			} else {
-				window.appendTextLine("Booking change was failed due to time violation with other booking slots!");
+			} else if (statusCode == StatusCode.SUCCESS_NOTAVAILABLE) {
+				window.appendTextLine("Booking change was failed due to time violation or empty booking slots!");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				confirmId = DataPackage.extractInt(receiveBuffer, 8);
+				window.appendText("Duplicate Request: ");
+				if(confirmId > 0)
+					window.appendTextLine("Booking change was successful, ConfirmationID = " + confirmId);
+				else window.appendTextLine("Boooking change was unsuccessful.");
 			}
 			break;
+			
 		case RequestPackage.SERVICE_MONITOR:
 			if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
 				window.appendTextLine("Monitor: successful continue receive");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				window.appendTextLine("Monitor: Not Available Facility");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				window.appendTextLine("Duplicate Request: Please Send a New Request");
 			}
 			break;
 		case RequestPackage.SERVICE_PROGRAM:
+			String str= "";
 			if(statusCode == StatusCode.SUCCESS_PROGRAM) {
+				str = DataPackage.extractString(receiveBuffer, 4);
 				window.appendTextLine("Quotes of the day");
-				String str = new String(receiveBuffer);
 				window.appendTextLine(str);
+			} else if(statusCode == StatusCode.SERVER_NOT_AVAILABLE) {
+				window.appendTextLine("Quotes of the day is unavailable");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				str = DataPackage.extractString(receiveBuffer, 8);
+				window.appendTextLine("Duplicate Request: ");
+				if(str != null && !str.equals(""))
+					window.appendTextLine(str);
 			}
 			break;
 		case RequestPackage.SERVICE_SPEC:
 			if(statusCode == StatusCode.SUCCESS_AVAILABLE) {
 				facilityName = DataPackage.extractStringList(receiveBuffer, 4);
+				window.appendTextLine("Facility Name List:");
+				for(int i = 0; i < facilityName.length; i++) {
+					window.appendTextLine((i+1) + ": " + facilityName[i]);
+				}
+			} else if(statusCode == StatusCode.SERVER_NOT_AVAILABLE) {
+				window.appendTextLine("Quotes of the day is unavailable");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				facilityName = DataPackage.extractStringList(receiveBuffer, 8);
+				window.appendTextLine("Duplicate Request: Please Send a New One");
 				window.appendTextLine("Facility Name List:");
 				for(int i = 0; i < facilityName.length; i++) {
 					window.appendTextLine((i+1) + ": " + facilityName[i]);

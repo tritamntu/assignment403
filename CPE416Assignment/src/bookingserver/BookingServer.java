@@ -34,10 +34,9 @@ public class BookingServer {
 	static int statusCode; 
 	static Facility[] fList;
 	static byte [] receiveBuffer;
-	static byte [] replyBuffer;
 	static byte [] dataBuffer;
 	static RequestHistory history;
-	static int sematicsCode = BookingServer.AT_LEAST_ONCE;
+	static int sematicsCode = BookingServer.AT_MOST_ONCE;
 	static int lastValue = -1;
 	static int lastService = -1;
 	
@@ -46,7 +45,7 @@ public class BookingServer {
 			// 1. initialize Facility and Network Socket
 			createFacilities();
 			socket = new DatagramSocket(port);
-			receiveBuffer = new byte[50];
+			receiveBuffer = new byte[500];
 			receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 			history = new RequestHistory();
 			// 2. start listening to request
@@ -68,17 +67,33 @@ public class BookingServer {
 				
 				System.out.println("Request from: " + clientAddr.getHostAddress() + ":" + clientPort);
 				System.out.println("Service Id = " + clientRequest.getServiceId());
-				
-				// 2.2 send acknowledgment
+				System.out.println("Request Id = " + clientRequest.getRequestId());
+				// 2.2 check if service can be served or not
 				int ackCode;
+				RequestMessage message = null;
 				if(clientRequest.getServiceId() >= RequestPackage.SERVICE_QUERY
 						&& clientRequest.getServiceId() <= RequestPackage.SERVICE_SPEC) {
 					ackCode = StatusCode.ACKNOWLEDGEMENT;
-				} else ackCode = StatusCode.ACKNOWLEDGEMENT_FAILED;
-				
-				ReplyPackage ackPackage = new ReplyPackage(ackCode);
-				BookingServer.replyBuffer = ackPackage.serialize();
-				BookingServer.sendPacket = new DatagramPacket(replyBuffer, replyBuffer.length, clientAddr, clientPort);
+				} else { 
+					ackCode = StatusCode.ACKNOWLEDGEMENT_FAILED;
+				}
+				// 2.2 * check duplicate and handle request
+				int index = BookingServer.history.searchRequest(clientAddr, clientPort, clientRequest.getRequestId());
+				System.out.println("Search Index " + index);
+				if(index != -1 && BookingServer.sematicsCode == BookingServer.AT_MOST_ONCE) {
+					// handle duplicate
+					System.out.println("Client Duplicate Request: ");
+					message = BookingServer.history.getMessage(index);
+					System.out.println(message.toString());
+					// send request message to client
+					ackCode = StatusCode.REQUEST_DUPLICATE;
+				}
+				// 2.2 * send acknowledgment to client
+				ReplyPackage rp = new ReplyPackage(ackCode);
+				if(ackCode == StatusCode.REQUEST_DUPLICATE) 
+					dataBuffer = rp.serialize(message.getDataBuffer());
+				else dataBuffer = rp.serialize();
+				BookingServer.sendPacket = new DatagramPacket(dataBuffer, dataBuffer.length, clientAddr, clientPort);
 				BookingServer.socket.send(BookingServer.sendPacket);
 				
 				if(ackCode != StatusCode.ACKNOWLEDGEMENT) {
@@ -86,26 +101,6 @@ public class BookingServer {
 					BookingServer.printHandlerClosing();
 					continue;
 				}
-				
-				// 2.2 * check duplicate and handle request
-				int index = BookingServer.history.searchRequest(clientAddr, clientPort, clientRequest.getRequestId());
-				if(index != -1 && BookingServer.sematicsCode == BookingServer.AT_MOST_ONCE) {
-					// handle duplicate
-					System.out.println("Client Duplicate Request: ");
-					RequestMessage message = BookingServer.history.getMessage(index);
-					System.out.println(message.toString());
-					// send request message to client
-					ReplyPackage replyPackage = new ReplyPackage(StatusCode.REQUEST_DUPLICATE);
-					dataBuffer = replyPackage.serialize(message.getDataBuffer());
-					BookingServer.sendPacket = new DatagramPacket(
-							dataBuffer, dataBuffer.length, 
-							InetAddress.getByName(message.getClientAddress()),
-							message.getPort());
-					BookingServer.socket.send(BookingServer.sendPacket);
-					BookingServer.printHandlerClosing();
-					continue;
-				}
-				
 				// 2.3 receive data package from client and execute command
 				TimePoint startTime = null;
 				Duration interval = null;
@@ -117,6 +112,9 @@ public class BookingServer {
 					socket.receive(receivePacket);
 					dataBuffer = receivePacket.getData();
 					startTime = DataPackage.extractTimePoint(dataBuffer, 0);
+					System.out.println("Service Query Availability: ");
+					System.out.println("\tFacility: " + clientRequest.getFacilityId());
+					System.out.println("\tStartTime: " + startTime.toString());
 					BookingServer.queryAvailibity(clientRequest.getFacilityId(), startTime);
 					break;
 				case RequestPackage.SERVICE_BOOK: 
@@ -125,13 +123,13 @@ public class BookingServer {
 					dataBuffer = receivePacket.getData();
 					startTime = DataPackage.extractTimePoint(dataBuffer, 0);
 					interval = DataPackage.extractDuration(dataBuffer, 3 * 4);
-					System.out.println("Service_Book Request: ");
+					System.out.println("Service Book Request: ");
 					System.out.println("\tStart time: " + startTime.toString());
 					System.out.println("\tDuration: " + interval.toString());
 					System.out.println("Facility id: " + clientRequest.getFacilityId());
-					
 					statusCode = BookingServer.bookRequest(clientRequest.getFacilityId(), startTime, interval);
-					System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
+					if(clientRequest.getFacilityId() >= 0 && clientRequest.getFacilityId() < fList.length)
+						System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
 					break;
 				case RequestPackage.SERVICE_CHANGE: 
 					// service 3 booking change
@@ -144,7 +142,8 @@ public class BookingServer {
 					System.out.println("Duration:  " + interval.toString());
 					System.out.println();
 					statusCode = BookingServer.bookChange(clientRequest.getFacilityId(), confirmationId, interval);
-					System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
+					if(clientRequest.getFacilityId() >= 0 && clientRequest.getFacilityId() < fList.length)
+						System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
 					break;
 				case RequestPackage.SERVICE_MONITOR: 
 					// service 4 monitor call back
@@ -180,6 +179,7 @@ public class BookingServer {
 				} 
 				// 2.5 store request in history
 				RequestMessage requestMessage = new RequestMessage(clientRequest, clientAddr, clientPort);
+				DataPackage.printByteArray(dataBuffer);
 				requestMessage.setBuffer(dataBuffer);
 				BookingServer.history.addMessage(requestMessage);
 				// 2.6 send data package to client
@@ -223,7 +223,17 @@ public class BookingServer {
 		System.out.println("Start Service 1: Query Availability");
 		TimePoint nextTime = null;
 		// 1. check availability and status code
-		boolean available = fList[facilityId].queryAvailibility(startTime, nextTime);
+		boolean available = false;
+		if(facilityId > 0 && facilityId < fList.length) {
+			available = fList[facilityId].queryAvailibility(startTime);
+			nextTime = fList[facilityId].getNextTime(startTime);
+		} else {
+			nextTime = null;
+		}
+		System.out.println("Availability : " + available);
+		if(nextTime != null)
+			System.out.println(nextTime.toString());
+		else System.out.println("Null NextTime");
 		int statusCode = -1;
 		if(available) statusCode = StatusCode.SUCCESS_AVAILABLE;
 		else 		  statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
@@ -238,14 +248,20 @@ public class BookingServer {
 			int facilityId, TimePoint startTime, Duration interval) {
 		// 1. add slot to schedule
 		System.out.println("Start Service 2: Book Request");
-		int confirmId = fList[facilityId].addSlot(new BookingSlot(startTime, interval));
+		int confirmId = -1;
+		if(facilityId > 0 && facilityId < fList.length) {
+			confirmId = fList[facilityId].addSlot(new BookingSlot(startTime, interval));
+		} else {
+			confirmId = -1;
+		}
 		int statusCode;
 		if(confirmId == -1) 
-			statusCode = StatusCode.FAILED_BOOKING;
+			statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		else statusCode =StatusCode.SUCCESS_BOOKING;
 		// 2. setup data package to reply
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
 		dataBuffer = replyPackage.serialize(DataPackage.serialize(confirmId));
+		DataPackage.printByteArray(dataBuffer);
 		return statusCode;
 	}
 	
@@ -254,9 +270,14 @@ public class BookingServer {
 		// 1. change for a book record 
 		System.out.println("Start Service 3: Booking Change");
 		int statusCode = -1;
-		int confirmId = fList[facilityId].bookChange(confirmationId, interval);
+		int confirmId = -1;
+		if(facilityId > 0 && facilityId < fList.length) {
+			confirmId = fList[facilityId].bookChange(confirmationId, interval);
+		} else {
+			confirmId = -1;
+		}
 		if(confirmId == -1) 
-			statusCode = StatusCode.FAILED_BOOKING_CHANGE;
+			statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		else statusCode = StatusCode.SUCCESS_BOOKING_CHANGE;
 		// 2. setup reply data
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
@@ -269,9 +290,13 @@ public class BookingServer {
 			throws UnknownHostException {
 		// 1. add client to monitor list
 		System.out.println("Start Service 4: Monitor");
-		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, interval);
-		fList[facilityId].addMonitorClient(newClient);
 		int statusCode = StatusCode.SUCCESS_ADD_MONITOR;
+		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, interval);
+		if(facilityId > 0 && facilityId < fList.length) {
+			fList[facilityId].addMonitorClient(newClient);
+		} else {
+			statusCode = StatusCode.FACILITY_NOT_FOUND;
+		}
 		// 2. setup reply data
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
 		dataBuffer = replyPackage.serialize(null);
@@ -303,26 +328,21 @@ public class BookingServer {
 		}
 	}
 	
-	public static int queryDescription(int facilityId) 
-			throws UnsupportedEncodingException {
-		// 1. search description of the facility
-		String str = fList[facilityId].toString();
-		int statusCode = StatusCode.SUCCESS_AVAILABLE;
-		ReplyPackage replyPackage = new ReplyPackage(statusCode);
-		// 2. setup data buffer to client
-		dataBuffer = replyPackage.serialize(DataPackage.serialize(str));
-		return statusCode;
-	}
-	
 	public static int queryFacilityList() throws UnsupportedEncodingException {
 		// 1. create string array of facility names
 		int statusCode = StatusCode.SUCCESS_AVAILABLE;
-		String[] strAr = new String[fList.length];
-		for(int i = 0; i < strAr.length; i++)
-			strAr[i] = fList[i].getDesc();
-		ReplyPackage rp = new ReplyPackage(statusCode);
-		// 2. setup data buffer to client
-		dataBuffer = rp.serialize(DataPackage.serialize(strAr));
+		if(fList == null) {
+			statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
+			ReplyPackage rp = new ReplyPackage(statusCode);
+			dataBuffer = rp.serialize();
+		} else {
+			String[] strAr = new String[fList.length];
+			for(int i = 0; i < strAr.length; i++)
+				strAr[i] = fList[i].getDesc();
+			ReplyPackage rp = new ReplyPackage(statusCode);
+			// 2. setup data buffer to client
+			dataBuffer = rp.serialize(DataPackage.serialize(strAr));
+		}
 		return statusCode;
 	}
 	
@@ -330,12 +350,11 @@ public class BookingServer {
 			throws UnsupportedEncodingException {
 		System.out.println("Start Service 6: Quote of the day");
 		String str = "nothing";
-		int statusCode = StatusCode.FACILITY_NOT_FOUND;
-		replyBuffer = (new ReplyPackage(statusCode)).serialize();
+		int statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		if (input>9 ||input<0){
 			str = "Please make sure that your number is between 0 an 9";
 		}
-		else if(input<9 && input>0){
+		else if(input<=9 && input>=0){
 			int output;
 			if (runAgain == true){
 				lastValue++;
@@ -346,6 +365,7 @@ public class BookingServer {
 				lastValue = output;
 			}
 			str = quote(output);
+			System.out.println(str);
 		}
 		statusCode = StatusCode.SUCCESS_PROGRAM; 
 		ReplyPackage rp = new ReplyPackage(statusCode);
@@ -356,16 +376,16 @@ public class BookingServer {
 	
 	public static String quote(int output){
 		String[] quotes = new String [10];
-		quotes[0] = "Quote of the day: A day without sunshine is like, you know, night.";
-		quotes[1] = "Quote of the day: Oh, love will make a dog howl in rhyme";
-		quotes[2] = "Quote of the day: Do not take life too seriously. You will never get out of it alive.";
-		quotes[3] = "Quote of the day: Weather forecast for tonight: dark.";
-		quotes[4] = "Quote of the day: I found there was only one way to look thin: hang out with fat people.";
-		quotes[5] = "Quote of the day: I intend to live forever. So far, so good.";
-		quotes[6] = "Quote of the day: All generalizations are false, including this one.";
-		quotes[7] = "Quote of the day: Why do they call it rush hour when nothing moves?";
-		quotes[8] = "Quote of the day: They say marriages are made in Heaven. But so is thunder and lightning.";
-		quotes[9] = "Quote of the day: If you have a secret, people will sit a little bit closer.";
+		quotes[0] = "Quote of the day: A day without sunshine is like, you know, night.!!!";
+		quotes[1] = "Quote of the day: Oh, love will make a dog howl in rhyme.!!!";
+		quotes[2] = "Quote of the day: Do not take life too seriously. You will never get out of it alive.!!!";
+		quotes[3] = "Quote of the day: Weather forecast for tonight: dark.!!!";
+		quotes[4] = "Quote of the day: I found there was only one way to look thin: hang out with fat people.!!!";
+		quotes[5] = "Quote of the day: I intend to live forever. So far, so good.!!!";
+		quotes[6] = "Quote of the day: All generalizations are false, including this one.!!!";
+		quotes[7] = "Quote of the day: Why do they call it rush hour when nothing moves?!!!";
+		quotes[8] = "Quote of the day: They say marriages are made in Heaven. But so is thunder and lightning.!!!";
+		quotes[9] = "Quote of the day: If you have a secret, people will sit a little bit closer.!!!";
 		return quotes[output];
 
 	}
