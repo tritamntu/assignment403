@@ -36,7 +36,7 @@ public class BookingServer {
 	static byte [] receiveBuffer;
 	static byte [] dataBuffer;
 	static RequestHistory history;
-	static int sematicsCode = BookingServer.AT_MOST_ONCE;
+	static int sematicsCode = BookingServer.AT_LEAST_ONCE;
 	static int lastValue = -1;
 	static int lastService = -1;
 	
