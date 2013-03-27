@@ -1,6 +1,10 @@
 package booking;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Facility {
 	private int id;
@@ -97,6 +101,7 @@ public class Facility {
 		}
 		return nextTime;
 	}
+	
 	// add method
 	public int addSlot(BookingSlot newSlot) {
 		int index = 0;
@@ -135,10 +140,84 @@ public class Facility {
 		return confirmId;
 	}
 	
+	// add method
+	public int addSlotWithoutChangeConfirmId(BookingSlot newSlot) {
+		int index = 0;
+		// find ordering index to add slot
+		while(index < slots.size()) {
+			//System.out.println("index: " + index + ", size = " + slots.size());
+			BookingSlot currentSlot = slots.get(index);
+			if(newSlot.compareTime(currentSlot) <= 0) {
+				break;
+			} else {
+				index++;
+			}
+		}
+		// check violation
+		// before violation: start time of new slot violates end time of previous
+		if(index > 0) {
+			BookingSlot prevSlot = slots.get(index - 1);
+			if(newSlot.compareTime(prevSlot.getEndTime()) < 0) {
+				System.out.println("Time Violation: before");
+				return -1;
+			}
+		}
+		// after violation: end time of new slot violates start time of the next
+		if(index < slots.size()) {
+			BookingSlot currSlot = slots.get(index);
+			if(currSlot.compareTime(newSlot.getEndTime()) < 0) {
+				System.out.println("Time Violation: after");
+				return -1;
+			}
+		}
+		
+		slots.add(index, newSlot);
+		return confirmId;
+	}
+		
 	public BookingSlot removeSlot(int index) {
 		if(this.slots.size() == 0 || this.slots.size() > 0 && index >= this.slots.size())
 			return null;
 		return this.slots.remove(index);
+	}
+	
+	public BookingSlot removeSlot(InetAddress clientAddr, int clientPort, int confirmationId) {
+		int i;
+		for(i = 0; i < this.slots.size(); i++) {
+			BookingSlot slot = this.slots.get(i);
+			if(slot.compareClient(clientAddr, clientPort, confirmationId)) {
+				return this.slots.remove(i);
+			}
+		}
+		return null;
+		
+	}
+	
+	public void removeAllSlot(InetAddress clientAddr, int clientPort) {
+		System.out.println("Size = " + this.slots.size());		
+		for (Iterator i = slots.iterator(); i.hasNext(); ) {
+		    BookingSlot slot = (BookingSlot)i.next();
+		    if(slot.compareClient(clientAddr, clientPort))
+		    	i.remove();
+		}
+		System.out.println("Size = " + this.slots.size());
+	}
+	
+	public BookingSlot removeLastSlot(InetAddress clientAddr, int clientPort) {
+		int latestConfirmId = -1;
+		int latestIndex = -1;
+		for(int i = 0; i < slots.size(); i++) {
+			BookingSlot slot = slots.get(i);
+			if(slot.compareClient(clientAddr, clientPort)) {
+				if(slot.getConfirmationId() > latestConfirmId) {
+					latestConfirmId = slot.getConfirmationId();
+					latestIndex = i;
+				}
+			}
+		}
+		if(latestIndex != -1)
+			return slots.remove(latestIndex);
+		else return null;
 	}
 	
 	// search booking slot by confirmation id
@@ -160,7 +239,7 @@ public class Facility {
 		return index;
 	}
 	
-	public int bookChange(int confirmId, Duration dr) {
+	public int bookChange(int confirmId, Duration dr) throws UnknownHostException {
 		// return -1 if failed
 		// otherwise return the new confirmation id
 		int index = this.searchBookSlot(confirmId);
@@ -171,7 +250,7 @@ public class Facility {
 		BookingSlot updateSlot = currSlot.getUpdateSlot(dr);
 		int addResult = this.addSlot(updateSlot);
 		if(addResult == -1)
-			this.addSlot(currSlot);
+			this.addSlotWithoutChangeConfirmId(currSlot);
 		return addResult;
 	}
 

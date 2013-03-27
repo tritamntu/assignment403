@@ -1,4 +1,4 @@
-package bookingclient;
+package bookingclient.bookingclientUI;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,6 +16,7 @@ import data.RequestPackage;
 
 import booking.Duration;
 import booking.TimePoint;
+import bookingclient.BookingClient;
 
 public class BookChangeForm extends JFrame{
 	

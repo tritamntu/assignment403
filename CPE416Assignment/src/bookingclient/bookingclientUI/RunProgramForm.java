@@ -1,4 +1,4 @@
-package bookingclient;
+package bookingclient.bookingclientUI;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import bookingclient.BookingClient;
 
 import data.RequestPackage;
 
@@ -55,7 +57,7 @@ public class RunProgramForm extends JFrame {
 	    panel.add(cancelBtn);
         // set property
 		this.setTitle("Query Form");
-		this.setSize(300, 200);
+		this.setSize(300, 150);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}

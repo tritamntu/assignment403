@@ -1,4 +1,4 @@
-package bookingclient;
+package bookingclient.bookingclientUI;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,24 +11,22 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import booking.Duration;
+import data.RequestPackage;
 
-public class MonitorCallForm extends JFrame{
-	
-	private static final int MONITOR = 1;
-	private static final int CANCEL = 2;
+import booking.TimePoint;
+import bookingclient.BookingClient;
+
+public class QueryAvailForm extends JFrame{
 	
 	JButton submitBtn;
 	JButton cancelBtn;
 	JFrame frame = this;
 	JComboBox fCombo;
-	JComboBox durDayCombo;
-	JComboBox durHourCombo;
-	JComboBox durMinCombo;
-	int status;
+	JComboBox dCombo;
+	JComboBox hCombo;
+	JComboBox mCombo;
 	
-	public MonitorCallForm() {
-		status = MonitorCallForm.MONITOR;
+	public QueryAvailForm() {
 		// create content panel
 		JPanel panel = new JPanel();
 		this.getContentPane().add(panel);
@@ -37,22 +35,22 @@ public class MonitorCallForm extends JFrame{
 	    panel.add(new JLabel("Facility Name: "));
 	    fCombo = new JComboBox(BookingClient.facilityName);
 	    panel.add(fCombo);
-	    // add Duration Combo
-	    panel.add(new JLabel("Duration Day: "));
-	    durDayCombo = new JComboBox(BookingClient.weekDayList);
-	    panel.add(durDayCombo);
-	    panel.add(new JLabel("Duration Hour: "));
-	    durHourCombo = new JComboBox(BookingClient.hourList);
-	    panel.add(durHourCombo);
-	    panel.add(new JLabel("Duration Min: "));
-	    durMinCombo = new JComboBox(BookingClient.minList);
-	    panel.add(durMinCombo);
+	    panel.add(new JLabel("TimePoint Day: "));
+	    dCombo = new JComboBox(BookingClient.dayList);
+	    panel.add(dCombo);
+	    panel.add(new JLabel("TimePoint Hour: "));
+	    hCombo = new JComboBox(BookingClient.hourList);
+	    panel.add(hCombo);
+	    panel.add(new JLabel("TimePoint Min: "));
+	    mCombo = new JComboBox(BookingClient.minList);
+	    panel.add(mCombo);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
 	    submitBtn.addActionListener(new ActionListener() {
 	           public void actionPerformed(ActionEvent event) {
 	        	   try {
 					getFormValues();
+					frame.dispose();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -63,7 +61,6 @@ public class MonitorCallForm extends JFrame{
 	    cancelBtn = new JButton("Cancel");
 	    cancelBtn.addActionListener(new ActionListener() {
 	           public void actionPerformed(ActionEvent event) {
-	        	   BookingClient.stopMonitor = true;
 	        	   frame.dispose();
 	          }
 	       });
@@ -75,25 +72,30 @@ public class MonitorCallForm extends JFrame{
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
+	private void getFormValues() throws IOException {
+		String fname = (String)this.fCombo.getSelectedItem();
+		int fIndex = BookingClient.getFacilityIndex(fname);
+		String timeDay = (String)this.dCombo.getSelectedItem();
+		int day = BookingClient.getDayIndex(timeDay);
+		String timeHour = (String)this.hCombo.getSelectedItem();
+		int hour = Integer.parseInt(timeHour);
+		String timeMin = (String)this.mCombo.getSelectedItem();
+		int min = Integer.parseInt(timeMin);
+		TimePoint tp = new TimePoint(day, hour, min);
+		BookingClient.sendRequest(RequestPackage.SERVICE_QUERY, fIndex, 0, tp, null);
+	}
+	
 	public void updateFList() {
+		System.out.println("Service 1 update FList");
 		this.fCombo.removeAllItems();
 		for(String s: BookingClient.facilityName) {
+			System.out.println(s);
 			fCombo.addItem(s);
 		}
 	}
 	
-	public void getFormValues() throws IOException {
-		int fIndex = BookingClient.getFacilityIndex((String)fCombo.getSelectedItem());
-		int drDay = Integer.parseInt((String)durDayCombo.getSelectedItem());
-		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
-		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
-		MonitorThread thread = new MonitorThread(fIndex, drDay, drHour, drMin);
-		thread.start();
-	}
-	
-	
 	public static void main(String [] args) {
-		MonitorCallForm form = new MonitorCallForm();
+		QueryAvailForm form = new QueryAvailForm();
 		form.setVisible(true);
 	}
 }

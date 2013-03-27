@@ -7,12 +7,14 @@ import java.nio.IntBuffer;
 
 public class RequestPackage implements Serializable {
 	
-	public static final int SERVICE_QUERY = 0;
-	public static final int SERVICE_BOOK = 1;
-	public static final int SERVICE_CHANGE = 2;
-	public static final int SERVICE_MONITOR = 3;
-	public static final int SERVICE_PROGRAM = 4;
-	public static final int SERVICE_SPEC = 5;
+	public static final int SERVICE_SPEC = 0;
+	public static final int SERVICE_QUERY = 1;
+	public static final int SERVICE_BOOK = 2;
+	public static final int SERVICE_CHANGE = 3;
+	public static final int SERVICE_MONITOR = 4;
+	public static final int SERVICE_PROGRAM = 5;
+	public static final int SERVICE_REMOVE_ALL = 6;
+	public static final int SERVICE_REMOVE_LAST = 7;
 	
 	private int requestId;
 	private int serviceId;

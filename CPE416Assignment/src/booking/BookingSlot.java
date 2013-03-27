@@ -1,14 +1,26 @@
 package booking;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class BookingSlot {
 	private TimePoint startTime;
 	private Duration interval;
 	private int confirmationId;
+	private InetAddress clientAddr;
+	private int clientPort;
 	
 	//constructor
 	public BookingSlot(TimePoint tp, Duration dr) {
 		startTime = new TimePoint(tp.getDate(), tp.getHour(), tp.getMin());
 		interval = new Duration(dr.getDay(), dr.getHour(), dr.getMin());
+	}
+	
+	public BookingSlot(TimePoint tp, Duration dr, InetAddress clientAddr, int clientPort) 
+			throws UnknownHostException {
+		this(tp, dr);
+		this.clientAddr = InetAddress.getByName(clientAddr.getHostAddress());
+		this.clientPort = clientPort;
 	}
 	
 	public int compareTime(TimePoint tp) {
@@ -19,13 +31,28 @@ public class BookingSlot {
 		return this.startTime.compareTime(slot.startTime);
 	}
 	
+	public boolean compareClient(InetAddress clientAddr, int clientPort, int confirmationId) {
+		return this.clientAddr.equals(clientAddr) 
+				&& (this.clientPort == clientPort) 
+				&& (this.confirmationId == confirmationId);
+	}
+	
+	public boolean compareClient(InetAddress clientAddr, int clientPort) {
+		if(this.clientAddr == null)
+			System.out.println("Null Client Address");
+		return this.clientAddr.equals(clientAddr) 
+				&& (this.clientPort == clientPort);
+	}
 	// get and set method
 	
 	// get a update slot from this slot
-	public BookingSlot getUpdateSlot(Duration dr) {
+	public BookingSlot getUpdateSlot(Duration dr) 
+			throws UnknownHostException {
 		BookingSlot updateSlot = null;
 		TimePoint updateTP = new TimePoint(this.startTime, dr);
 		updateSlot = new BookingSlot(updateTP, this.interval);
+		updateSlot.setClientAddress(this.clientAddr.getHostAddress());
+		updateSlot.setClientPort(this.clientPort);
 		return updateSlot;
 	}
 	
@@ -73,4 +100,21 @@ public class BookingSlot {
 	public void setConfirmationId(int confirmationId) {
 		this.confirmationId = confirmationId;
 	}
+	
+	public String getClientAddress() {
+		return this.clientAddr.getHostAddress();
+	}
+	
+	public int getClientPort() {
+		return this.clientPort;
+	}
+	
+	public void setClientAddress(String hostAddress) throws UnknownHostException {
+		this.clientAddr = InetAddress.getByName(hostAddress);
+	}
+	
+	public void setClientPort(int port) {
+		this.clientPort = port;
+	}
+	
 }

@@ -1,10 +1,11 @@
-package bookingclient;
+package bookingclient.bookingclientUI;
 
 import java.io.IOException;
 
 import data.RequestPackage;
 
 import booking.Duration;
+import bookingclient.BookingClient;
 
 public class MonitorThread extends Thread{
 	private int facilityId;

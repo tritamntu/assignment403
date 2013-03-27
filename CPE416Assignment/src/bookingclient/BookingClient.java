@@ -18,6 +18,8 @@ import data.StatusCode;
 import booking.BookingSlot;
 import booking.Duration;
 import booking.TimePoint;
+import bookingclient.bookingclientUI.ClientUI;
+import bookingserver.BookingServer;
 
 public class BookingClient {
 
@@ -35,7 +37,7 @@ public class BookingClient {
 	public static final int MAX_TIMEOUT = 4;
 	
 	// global data objects
-	static String[] facilityName = {};
+	public static String[] facilityName = {};
 	static ArrayList<Integer> confirmIdList;
 	// global UDP connection objects
 	static DatagramSocket socket;
@@ -50,10 +52,10 @@ public class BookingClient {
 	static Scanner sc = new Scanner(System.in);
 	// user interface
 	static ClientUI window;
-	static boolean stopMonitor;
+	public static boolean stopMonitor;
 	static int ackTimeoutCount;
 	static int dataTimeoutCount;
-	
+	static int lostPercent = 50;
 	public static void main(String [] args) {
 		try {
 
@@ -61,41 +63,13 @@ public class BookingClient {
 			while(true) {
 				
 			}
-			//System.out.println("Client terminates ..");
-
-			//socket = new DatagramSocket(clientPort);
-			//serverAddr = InetAddress.getByName("192.168.0.109");
-			//serverAddr = InetAddress.getByName("127.0.0.1");
-
-			//interfaceControl();
-		
 			
-			
-//			TimePoint tp = new TimePoint(TimePoint.MONDAY, 10, 1);
-//			requestId = 1;
-//			//queryAvailability(1, tp);
-//			int confirmId1 = bookRequest(1, tp, new Duration(0, 1, 0));
-//			requestId++;
-//			tp = new TimePoint(TimePoint.MONDAY, 12, 1);
-//			int confirmId2 = bookRequest(1, tp, new Duration(0, 1, 0));
-//			requestId++;
-//			if(confirmId1 != -1) {
-//				bookChange(1, confirmId1, new Duration(0, 2, 0));
-//			}
-//			
-//			Duration interval = new Duration(1, 2, 0);
-//			BookingClient.monitor(1, interval);
-	
-			//System.out.println("Client terminates ..");
-
-
 		} catch (SocketException | UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
 	
-
 	public static void init() 
 			throws SocketException, UnknownHostException {
 		System.out.println("Init");
@@ -117,109 +91,6 @@ public class BookingClient {
 		window.setVisible(true);
 	}
 	
-	public static void displayInterface()
-	{
-		System.out.println("Please enter an option from 1 to 5");
-		System.out.println("1. Query availablity of a facility");
-		System.out.println("2. Book a facility");
-		System.out.println("3. Change a booking");
-		System.out.println("4. Monitor the availability of a facility");
-		System.out.println("5. Exit");
-	}
-	
-	public static void interfaceControl() throws IOException
-	{
-		// The input format complies with the requirement stated in question
-		// 
-		int option;
-		do
-		{
-			System.out.println("\nPlease enter an option from 1 to 5");
-			System.out.println("1. Query availablity of a facility");
-			System.out.println("2. Book a facility");
-			System.out.println("3. Change a booking");
-			System.out.println("4. Monitor the availability of a facility");
-			System.out.println("5. Exit");
-			
-			option= sc.nextInt();
-			sc.nextLine(); // to remove the \n in buffer after nextInt
-			
-			String facilityName;
-			String days;
-			TimePoint startTime, endTime;
-			Duration duration;
-			char AP;
-			int confID;
-			
-			switch(option){
-			
-			case 1: 
-				System.out.print("Enter facility Name: " );
-				facilityName = sc.nextLine().trim();
-				System.out.print("Enter days as in MONDAY TUESDAY: " );
-				days= sc.nextLine().trim().toUpperCase();
-				//queryAvailability();
-				break;
-				
-			case 2:
-				System.out.print("Enter facility Name: " );
-				facilityName = sc.nextLine().trim();
-				System.out.println("Enter start time" );
-				startTime= enterTime();
-				System.out.println("Enter end time" );
-				endTime= enterTime();
-				//bookRequest();
-				break;
-				
-			case 3:
-				System.out.print("Enter facility Name: " );
-				facilityName = sc.nextLine().trim();
-				System.out.print("Enter the confirmation ID: " );
-				confID= Integer.parseInt(sc.nextLine().trim());
-				System.out.print("Enter the Advance or Postpone time [A/P]: " );
-				AP = sc.nextLine().trim().charAt(0);
-				duration= enterDuration();
-				// bookChange();
-				break;
-				
-			case 4: 
-				System.out.print("Enter facility Name: " );
-				facilityName = sc.nextLine().trim();
-				System.out.println("Enter monitor interval" );
-				duration= enterDuration();
-				//monitor(facilityName, duration);
-				break;
-			}// end switch		
-		}while(option!=5);	
-	}
-	
-	public static TimePoint enterTime()
-	{
-		int day, hour, min;
-		System.out.println("1. Monday\n2. Tuesday\n3. Wednesday\n4. Thurday\n5. Friday\n6. Saturday\n7. Sunday");
-		System.out.print("Select a day [1 to 7]: ");
-		day= Integer.parseInt(sc.nextLine().trim())-1;
-		System.out.print("Enter hour [0 to 23]: ");
-		hour=Integer.parseInt(sc.nextLine().trim());
-		System.out.print("Enter mins [0 to 59]: " );
-		min= Integer.parseInt(sc.nextLine().trim());
-		return new TimePoint(day, hour, min);
-	}
-	
-	public static Duration enterDuration()
-	{
-		int day, hour, min;
-		System.out.print("Select number of days [1 to 7]: ");
-		day= Integer.parseInt(sc.nextLine().trim())-1;
-		System.out.print("Enter hour [0 to 23]: ");
-		hour=Integer.parseInt(sc.nextLine().trim());
-		System.out.print("Enter mins [0 to 59]: " );
-		min= Integer.parseInt(sc.nextLine().trim());
-		return new Duration(day,hour,min);
-
-	}
-	
-	
 	public static int sendRequest(int serviceId, int facilityId, int optionalId, TimePoint tp, Duration dr) 
 			throws SocketException {
 		System.out.println("Serivce Id " + serviceId);
@@ -234,19 +105,19 @@ public class BookingClient {
 			try {
 				window.appendTextLine(BookingClient.getServiceName(serviceId));
 				// 1. send request package
-				sendRequestPackage(serviceId, facilityId, optionalId);
+				sendRequestPackage(serviceId, facilityId, optionalId, 50);
 				// 2. receive acknowledgment package
 				statusCode = receiveAckPackage();
 				System.out.println("StatusCode " + statusCode + ";");
 				if(statusCode == StatusCode.ACKNOWLEDGEMENT_FAILED) {
-					window.appendTextLine("Failed Acknowedgment From Server");
+					window.appendTextLine("Ack: Failed Acknowedgment From Server");
 					window.appendTextLine("End Request .................");
 					window.appendTextLine("");
 					return statusCode;
 				}
 				// 3. send data package
 				if(statusCode != StatusCode.REQUEST_DUPLICATE) {
-					sendDataPackage(serviceId, tp, dr);
+					sendDataPackage(serviceId, tp, dr, 50);
 				// 4. receive data package if the request is not a duplicate
 					socket.receive(receivePacket);
 					receiveBuffer = receivePacket.getData();
@@ -285,21 +156,22 @@ public class BookingClient {
 		}
 		if(sending) {
 			statusCode = StatusCode.SERVER_NOT_AVAILABLE;
-			window.appendTextLine("Server Not Available, Try Again Later");
+			window.appendTextLine("Error: Server Not Available, Try Again Later");
 		}
 		dataTimeoutCount = 0;
 		window.appendTextLine("End Request .................");
 		window.appendTextLine("");
-		//requestId++;
+		requestId++;
 		return statusCode;
 	}
 	
-	public static void sendRequestPackage(int serviceId, int facilityId, int optionalId) 
+	public static void sendRequestPackage(int serviceId, int facilityId, int optionalId, int lostPercent) 
 			throws IOException {
 		RequestPackage rp = new RequestPackage(requestId, serviceId, facilityId, optionalId);
 		sendBuffer = rp.serialize();
 		sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, serverAddr, serverPort);
-		socket.send(sendPacket);
+		//socket.send(sendPacket);
+		BookingClient.sendWithLoss(lostPercent);
 	}
 	
 	public static int receiveAckPackage() 
@@ -309,7 +181,7 @@ public class BookingClient {
 		return ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
 	}
 	
-	public static void sendDataPackage(int serviceId, TimePoint tp, Duration dr) 
+	public static void sendDataPackage(int serviceId, TimePoint tp, Duration dr, int lostPercent) 
 			throws IOException {
 		switch(serviceId) {
 		case RequestPackage.SERVICE_QUERY:
@@ -330,11 +202,18 @@ public class BookingClient {
 		case RequestPackage.SERVICE_SPEC:
 			sendBuffer = null;
 			break;
+		case RequestPackage.SERVICE_REMOVE_ALL:
+			sendBuffer = null;
+			break;
+		case RequestPackage.SERVICE_REMOVE_LAST:
+			sendBuffer = null;
+			break;
 		}
 		
 		if(sendBuffer != null) {
 			sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, serverAddr, serverPort);
-			socket.send(sendPacket);
+			//socket.send(sendPacket);
+			BookingClient.sendWithLoss(lostPercent);
 		}
 	}
 	
@@ -346,12 +225,12 @@ public class BookingClient {
 			
 			if(statusCode == StatusCode.SUCCESS_AVAILABLE) {
 				nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
-				window.appendTextLine("The Facility is Available.");
-				window.appendTextLine("The next occupied time slot is: " + nextTime.toString());
+				window.appendTextLine("Query: The Facility is Available.");
+				window.appendTextLine("Query: The next occupied time slot is: " + nextTime.toString());
 			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE){
 				nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
-				window.appendTextLine("The Facility is not Available.");
-				window.appendTextLine("The next available time slot is: " + nextTime.toString());
+				window.appendTextLine("Query: The Facility is not Available.");
+				window.appendTextLine("Query: The next available time slot is: " + nextTime.toString());
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				nextTime = DataPackage.extractTimePoint(receiveBuffer, 8);
 				window.appendTextLine("Duplicate Request: The Facility's availability is unknown.");
@@ -363,9 +242,9 @@ public class BookingClient {
 			
 			if(statusCode == StatusCode.SUCCESS_BOOKING) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 4);
-				window.appendTextLine("Booking was successful, ConfirmationID = " + confirmId);
+				window.appendTextLine("Booking: Booking was successful, ConfirmationID = " + confirmId);
 			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE){
-				window.appendTextLine("Booking was failed due to time violation with other booking slots!");
+				window.appendTextLine("Booking: Booking was failed due to time violation with other booking slots!");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 8);
 				window.appendText("Duplicate Request: ");
@@ -379,9 +258,9 @@ public class BookingClient {
 			
 			if(statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 4);
-				window.appendTextLine("Booking change was successful, new ConfirmationID = " + confirmId);
+				window.appendTextLine("Change: Booking change was successful, new ConfirmationID = " + confirmId);
 			} else if (statusCode == StatusCode.SUCCESS_NOTAVAILABLE) {
-				window.appendTextLine("Booking change was failed due to time violation or empty booking slots!");
+				window.appendTextLine("Change: Booking change was failed due to time violation or empty booking slots!");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 8);
 				window.appendText("Duplicate Request: ");
@@ -394,7 +273,7 @@ public class BookingClient {
 		case RequestPackage.SERVICE_MONITOR:
 			if(statusCode == StatusCode.SUCCESS_ADD_MONITOR) {
 				window.appendTextLine("Monitor: successful continue receive");
-			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE) {
 				window.appendTextLine("Monitor: Not Available Facility");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				window.appendTextLine("Duplicate Request: Please Send a New Request");
@@ -433,6 +312,24 @@ public class BookingClient {
 				}
 			}
 			break;
+		case RequestPackage.SERVICE_REMOVE_ALL:
+			if(statusCode == StatusCode.SUCCESS_REMOVE) {
+				window.appendTextLine("Remove: all slots booked by this client have been removed");
+			} else if(statusCode == StatusCode.FACILITY_NOT_FOUND) {
+				window.appendTextLine("Remove: Error of not found facility");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				window.appendTextLine("Duplicate : All records have been removed");
+			}
+			break;
+		case RequestPackage.SERVICE_REMOVE_LAST:
+			if(statusCode == StatusCode.SUCCESS_REMOVE) {
+				window.appendTextLine("Remove: The latest booked by this client have been removed");
+			} else if(statusCode == StatusCode.SUCCESS_EMPTY) {
+				window.appendTextLine("Remove: Empty Booking Slots");
+			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
+				window.appendTextLine("Duplicate : The latest slot has been removed");
+			}
+			break;
 		}
 	}
 	
@@ -451,6 +348,10 @@ public class BookingClient {
 			return "Service 5: Get A Quote";
 		case RequestPackage.SERVICE_SPEC:
 			return "Service 6: Query Facility List";
+		case RequestPackage.SERVICE_REMOVE_ALL:
+			return "Service 7: Remove All Slots";
+		case RequestPackage.SERVICE_REMOVE_LAST:
+			return "Service 8: Remove Latest Booking Slot";
 		}
 		return str;
 	}
@@ -471,5 +372,18 @@ public class BookingClient {
 		return -1;
 	}
 	
+	public static void changeServer(String ipAddr, int port) throws UnknownHostException {
+		serverAddr = InetAddress.getByName(ipAddr);
+		serverPort = port;
+		window.appendTextLine("Address changed: " + serverAddr.getHostAddress() + ":" + serverPort);
+	}
 	
+	private static void sendWithLoss(int lostPercent) throws IOException {
+		int randomNum = (int) (100 * Math.random());
+		if(randomNum > lostPercent) {
+			BookingClient.socket.send(sendPacket);
+		} else {
+			window.appendTextLine("Sending packet was lost by simulation ... :( ");
+		}
+	}
 }
