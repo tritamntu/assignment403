@@ -40,6 +40,7 @@ public class BookingServer {
 	static int lastValue = -1;
 	static int lastService = -1;
 	static ServerUI window;
+	static int lostPercent = 50;
 	
 	public static void main(String [] args) {
 		try {
@@ -98,7 +99,8 @@ public class BookingServer {
 					dataBuffer = rp.serialize(message.getDataBuffer());
 				else dataBuffer = rp.serialize();
 				BookingServer.sendPacket = new DatagramPacket(dataBuffer, dataBuffer.length, clientAddr, clientPort);
-				BookingServer.socket.send(BookingServer.sendPacket);
+				// BookingServer.socket.send(BookingServer.sendPacket);
+				BookingServer.sendWithLoss(50);
 				switch(ackCode) {
 				case StatusCode.ACKNOWLEDGEMENT:
 					window.appendTextLine("StatusCode = ACKNOWLEDGEMENT");
@@ -211,7 +213,8 @@ public class BookingServer {
 				BookingServer.sendPacket = new DatagramPacket(
 						dataBuffer, dataBuffer.length, 
 						clientAddr, clientPort);
-				BookingServer.socket.send(sendPacket);
+				//BookingServer.socket.send(sendPacket);
+				BookingServer.sendWithLoss(50);
 				// 2.7 callback if a booking slot is changed
 				if(statusCode == StatusCode.SUCCESS_BOOKING
 				|| statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
@@ -345,7 +348,8 @@ public class BookingServer {
 				BookingServer.sendPacket = new DatagramPacket(
 						dataBuffer, dataBuffer.length,
 						clientAddr, clientPort);
-				BookingServer.socket.send(BookingServer.sendPacket);
+				//BookingServer.socket.send(BookingServer.sendPacket);
+				BookingServer.sendWithLoss(0);
 			}
 		} 
 	}
@@ -440,4 +444,12 @@ public class BookingServer {
 		BookingServer.sematicsCode = code;
 	}
 
+	private static void sendWithLoss(int lostPercent) throws IOException {
+		int randomNum = (int) (100 * Math.random());
+		if(randomNum > lostPercent) {
+			BookingServer.socket.send(sendPacket);
+		} else {
+			window.appendTextLine("Sending packet was lost by simulation ... :( ");
+		}
+	}
 }

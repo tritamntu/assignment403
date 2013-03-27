@@ -19,6 +19,7 @@ import booking.BookingSlot;
 import booking.Duration;
 import booking.TimePoint;
 import bookingclient.bookingclientUI.ClientUI;
+import bookingserver.BookingServer;
 
 public class BookingClient {
 
@@ -54,7 +55,7 @@ public class BookingClient {
 	public static boolean stopMonitor;
 	static int ackTimeoutCount;
 	static int dataTimeoutCount;
-	
+	static int lostPercent = 50;
 	public static void main(String [] args) {
 		try {
 
@@ -104,7 +105,7 @@ public class BookingClient {
 			try {
 				window.appendTextLine(BookingClient.getServiceName(serviceId));
 				// 1. send request package
-				sendRequestPackage(serviceId, facilityId, optionalId);
+				sendRequestPackage(serviceId, facilityId, optionalId, 50);
 				// 2. receive acknowledgment package
 				statusCode = receiveAckPackage();
 				System.out.println("StatusCode " + statusCode + ";");
@@ -116,7 +117,7 @@ public class BookingClient {
 				}
 				// 3. send data package
 				if(statusCode != StatusCode.REQUEST_DUPLICATE) {
-					sendDataPackage(serviceId, tp, dr);
+					sendDataPackage(serviceId, tp, dr, 50);
 				// 4. receive data package if the request is not a duplicate
 					socket.receive(receivePacket);
 					receiveBuffer = receivePacket.getData();
@@ -164,12 +165,13 @@ public class BookingClient {
 		return statusCode;
 	}
 	
-	public static void sendRequestPackage(int serviceId, int facilityId, int optionalId) 
+	public static void sendRequestPackage(int serviceId, int facilityId, int optionalId, int lostPercent) 
 			throws IOException {
 		RequestPackage rp = new RequestPackage(requestId, serviceId, facilityId, optionalId);
 		sendBuffer = rp.serialize();
 		sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, serverAddr, serverPort);
-		socket.send(sendPacket);
+		//socket.send(sendPacket);
+		BookingClient.sendWithLoss(lostPercent);
 	}
 	
 	public static int receiveAckPackage() 
@@ -179,7 +181,7 @@ public class BookingClient {
 		return ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
 	}
 	
-	public static void sendDataPackage(int serviceId, TimePoint tp, Duration dr) 
+	public static void sendDataPackage(int serviceId, TimePoint tp, Duration dr, int lostPercent) 
 			throws IOException {
 		switch(serviceId) {
 		case RequestPackage.SERVICE_QUERY:
@@ -210,7 +212,8 @@ public class BookingClient {
 		
 		if(sendBuffer != null) {
 			sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, serverAddr, serverPort);
-			socket.send(sendPacket);
+			//socket.send(sendPacket);
+			BookingClient.sendWithLoss(lostPercent);
 		}
 	}
 	
@@ -373,5 +376,14 @@ public class BookingClient {
 		serverAddr = InetAddress.getByName(ipAddr);
 		serverPort = port;
 		window.appendTextLine("Address changed: " + serverAddr.getHostAddress() + ":" + serverPort);
+	}
+	
+	private static void sendWithLoss(int lostPercent) throws IOException {
+		int randomNum = (int) (100 * Math.random());
+		if(randomNum > lostPercent) {
+			BookingClient.socket.send(sendPacket);
+		} else {
+			window.appendTextLine("Sending packet was lost by simulation ... :( ");
+		}
 	}
 }
