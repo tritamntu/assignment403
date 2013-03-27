@@ -1,4 +1,4 @@
-package bookingclient;
+package bookingclient.bookingclientUI;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import bookingclient.BookingClient;
 
 import data.RequestPackage;
 

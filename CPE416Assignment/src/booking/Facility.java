@@ -158,24 +158,30 @@ public class Facility {
 	}
 	
 	public void removeAllSlot(InetAddress clientAddr, int clientPort) {
-		System.out.println("Size = " + this.slots.size());
-		/*
-		List<Integer> toRemove = new ArrayList<Integer>();
-		for(int i = 0; i < this.slots.size(); i++) {
-			BookingSlot slot = this.slots.get(i);
-			if(slot.compareClient(clientAddr, clientPort)) {
-				System.out.println("Remove Index i " + i);
-				toRemove.add(i);
-			}
-		}*/
-		
+		System.out.println("Size = " + this.slots.size());		
 		for (Iterator i = slots.iterator(); i.hasNext(); ) {
 		    BookingSlot slot = (BookingSlot)i.next();
 		    if(slot.compareClient(clientAddr, clientPort))
 		    	i.remove();
 		}
-		//this.slots.removeAll(toRemove);
 		System.out.println("Size = " + this.slots.size());
+	}
+	
+	public BookingSlot removeLastSlot(InetAddress clientAddr, int clientPort) {
+		int latestConfirmId = -1;
+		int latestIndex = -1;
+		for(int i = 0; i < slots.size(); i++) {
+			BookingSlot slot = slots.get(i);
+			if(slot.compareClient(clientAddr, clientPort)) {
+				if(slot.getConfirmationId() > latestConfirmId) {
+					latestConfirmId = slot.getConfirmationId();
+					latestIndex = i;
+				}
+			}
+		}
+		if(latestIndex != -1)
+			return slots.remove(latestIndex);
+		else return null;
 	}
 	
 	// search booking slot by confirmation id

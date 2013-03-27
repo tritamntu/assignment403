@@ -73,7 +73,7 @@ public class BookingServer {
 				int ackCode;
 				RequestMessage message = null;
 				if(clientRequest.getServiceId() >= RequestPackage.SERVICE_SPEC
-						&& clientRequest.getServiceId() <= RequestPackage.SERVICE_INSERT) {
+						&& clientRequest.getServiceId() <= RequestPackage.SERVICE_REMOVE_LAST) {
 					ackCode = StatusCode.ACKNOWLEDGEMENT;
 				} else { 
 					ackCode = StatusCode.ACKNOWLEDGEMENT_FAILED;
@@ -175,8 +175,8 @@ public class BookingServer {
 				case RequestPackage.SERVICE_REMOVE_ALL:
 					BookingServer.removeAllSlots(clientRequest.getFacilityId(), clientAddr, clientPort);
 					break;
-				case RequestPackage.SERVICE_INSERT:
-					
+				case RequestPackage.SERVICE_REMOVE_LAST:
+					BookingServer.removeLastSlot(clientRequest.getFacilityId(), clientAddr, clientPort);
 					break;
 				} } catch (SocketTimeoutException e) {
 					// Timeout: server can't receive data package from client, execution terminates
@@ -389,6 +389,18 @@ public class BookingServer {
 		} 
 		ReplyPackage rp = new ReplyPackage(statusCode);
 		dataBuffer = rp.serialize();
+		return statusCode;
+	}
+	
+	public static int removeLastSlot(int facilityId, InetAddress clientAddr, int clientPort) {
+		int statusCode = StatusCode.FACILITY_NOT_FOUND;
+		if(facilityId < fList.length && facilityId >= 0) {
+			BookingSlot slot = fList[facilityId].removeLastSlot(clientAddr, clientPort);
+			if(slot != null)
+				statusCode = StatusCode.SUCCESS_REMOVE;
+			else
+				statusCode = StatusCode.SUCCESS_EMPTY;
+		} 
 		return statusCode;
 	}
 	

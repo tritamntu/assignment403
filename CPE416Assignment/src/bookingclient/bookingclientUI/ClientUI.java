@@ -1,4 +1,4 @@
-package bookingclient;
+package bookingclient.bookingclientUI;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -13,19 +13,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import bookingclient.BookingClient;
+
 import data.RequestPackage;
 
 
 public class ClientUI extends JFrame {
 	
 	JTextArea textArea;
-	JButton [] btn = new JButton[7];
+	JButton [] btn = new JButton[8];
 	BookChangeForm bookChangeForm;
 	BookRequestForm bookRequestForm;
 	MonitorCallForm monitorCallForm;
 	QueryAvailForm queryAvailForm;
 	RunProgramForm programForm;
 	RemoveSlotForm removeForm;
+	RemoveLastForm removeLastForm;
 	
 	public ClientUI() {
 		initUI();
@@ -43,7 +46,7 @@ public class ClientUI extends JFrame {
         this.add( new JScrollPane( this.textArea ), BorderLayout.CENTER);
         // add button list
         JPanel btnPanel = new JPanel();
-        btnPanel.setLayout(new GridLayout(7,1));
+        btnPanel.setLayout(new GridLayout(8,1));
         for(int i = 0; i < btn.length; i++) {
         	switch(i) {
         	case RequestPackage.SERVICE_QUERY:
@@ -111,6 +114,15 @@ public class ClientUI extends JFrame {
         			public void actionPerformed(ActionEvent event) {
         				removeForm = new RemoveSlotForm();
         				removeForm.setVisible(true);
+         			}
+         		});
+        		break;
+        	case RequestPackage.SERVICE_REMOVE_LAST:
+        		btn[i] = new JButton("Remove The Latest Slot");
+        		btn[i].addActionListener(new ActionListener() {
+        			public void actionPerformed(ActionEvent event) {
+        				removeLastForm = new RemoveLastForm();
+        				removeLastForm.setVisible(true);
          			}
          		});
         		break;

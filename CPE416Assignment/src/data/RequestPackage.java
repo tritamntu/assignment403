@@ -14,7 +14,7 @@ public class RequestPackage implements Serializable {
 	public static final int SERVICE_MONITOR = 4;
 	public static final int SERVICE_PROGRAM = 5;
 	public static final int SERVICE_REMOVE_ALL = 6;
-	public static final int SERVICE_INSERT = 7;
+	public static final int SERVICE_REMOVE_LAST = 7;
 	
 	private int requestId;
 	private int serviceId;

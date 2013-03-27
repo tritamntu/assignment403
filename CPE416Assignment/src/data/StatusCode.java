@@ -14,4 +14,5 @@ public class StatusCode {
 	public static final int REQUEST_DUPLICATE = 8;
 	public static final int SERVER_NOT_AVAILABLE = 9;
 	public static final int SUCCESS_REMOVE = 10;
+	public static final int SUCCESS_EMPTY = 11;
 }
