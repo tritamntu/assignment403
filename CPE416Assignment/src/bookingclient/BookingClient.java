@@ -109,7 +109,7 @@ public class BookingClient {
 				statusCode = receiveAckPackage();
 				System.out.println("StatusCode " + statusCode + ";");
 				if(statusCode == StatusCode.ACKNOWLEDGEMENT_FAILED) {
-					window.appendTextLine("Failed Acknowedgment From Server");
+					window.appendTextLine("Ack: Failed Acknowedgment From Server");
 					window.appendTextLine("End Request .................");
 					window.appendTextLine("");
 					return statusCode;
@@ -155,7 +155,7 @@ public class BookingClient {
 		}
 		if(sending) {
 			statusCode = StatusCode.SERVER_NOT_AVAILABLE;
-			window.appendTextLine("Server Not Available, Try Again Later");
+			window.appendTextLine("Error: Server Not Available, Try Again Later");
 		}
 		dataTimeoutCount = 0;
 		window.appendTextLine("End Request .................");
@@ -222,12 +222,12 @@ public class BookingClient {
 			
 			if(statusCode == StatusCode.SUCCESS_AVAILABLE) {
 				nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
-				window.appendTextLine("The Facility is Available.");
-				window.appendTextLine("The next occupied time slot is: " + nextTime.toString());
+				window.appendTextLine("Query: The Facility is Available.");
+				window.appendTextLine("Query: The next occupied time slot is: " + nextTime.toString());
 			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE){
 				nextTime = DataPackage.extractTimePoint(receiveBuffer, 4);
-				window.appendTextLine("The Facility is not Available.");
-				window.appendTextLine("The next available time slot is: " + nextTime.toString());
+				window.appendTextLine("Query: The Facility is not Available.");
+				window.appendTextLine("Query: The next available time slot is: " + nextTime.toString());
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				nextTime = DataPackage.extractTimePoint(receiveBuffer, 8);
 				window.appendTextLine("Duplicate Request: The Facility's availability is unknown.");
@@ -239,9 +239,9 @@ public class BookingClient {
 			
 			if(statusCode == StatusCode.SUCCESS_BOOKING) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 4);
-				window.appendTextLine("Booking was successful, ConfirmationID = " + confirmId);
+				window.appendTextLine("Booking: Booking was successful, ConfirmationID = " + confirmId);
 			} else if(statusCode == StatusCode.SUCCESS_NOTAVAILABLE){
-				window.appendTextLine("Booking was failed due to time violation with other booking slots!");
+				window.appendTextLine("Booking: Booking was failed due to time violation with other booking slots!");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 8);
 				window.appendText("Duplicate Request: ");
@@ -255,9 +255,9 @@ public class BookingClient {
 			
 			if(statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 4);
-				window.appendTextLine("Booking change was successful, new ConfirmationID = " + confirmId);
+				window.appendTextLine("Change: Booking change was successful, new ConfirmationID = " + confirmId);
 			} else if (statusCode == StatusCode.SUCCESS_NOTAVAILABLE) {
-				window.appendTextLine("Booking change was failed due to time violation or empty booking slots!");
+				window.appendTextLine("Change: Booking change was failed due to time violation or empty booking slots!");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				confirmId = DataPackage.extractInt(receiveBuffer, 8);
 				window.appendText("Duplicate Request: ");
@@ -322,7 +322,7 @@ public class BookingClient {
 			if(statusCode == StatusCode.SUCCESS_REMOVE) {
 				window.appendTextLine("Remove: The latest booked by this client have been removed");
 			} else if(statusCode == StatusCode.SUCCESS_EMPTY) {
-				window.appendTextLine("Remove: Error of not found facility");
+				window.appendTextLine("Remove: Empty Booking Slots");
 			} else if(statusCode == StatusCode.REQUEST_DUPLICATE) {
 				window.appendTextLine("Duplicate : The latest slot has been removed");
 			}
@@ -369,5 +369,9 @@ public class BookingClient {
 		return -1;
 	}
 	
-	
+	public static void changeServer(String ipAddr, int port) throws UnknownHostException {
+		serverAddr = InetAddress.getByName(ipAddr);
+		serverPort = port;
+		window.appendTextLine("Address changed: " + serverAddr.getHostAddress() + ":" + serverPort);
+	}
 }

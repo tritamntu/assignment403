@@ -39,10 +39,13 @@ public class BookingServer {
 	static int sematicsCode = BookingServer.AT_MOST_ONCE;
 	static int lastValue = -1;
 	static int lastService = -1;
+	static ServerUI window;
 	
 	public static void main(String [] args) {
 		try {
 			// 1. initialize Facility and Network Socket
+			window = new ServerUI();
+			window.setVisible(true);
 			createFacilities();
 			socket = new DatagramSocket(port);
 			receiveBuffer = new byte[500];
@@ -50,7 +53,7 @@ public class BookingServer {
 			history = new RequestHistory();
 			// 2. start listening to request
 			while(true) {
-				System.out.println("Waiting for a request ..");
+				window.appendTextLine("Waiting for a request ..");
 				// 2.1 receive request
 				BookingServer.socket.setSoTimeout(0);
 				BookingServer.socket.receive(receivePacket);
@@ -65,10 +68,11 @@ public class BookingServer {
 						ByteBuffer.wrap(receiveBuffer, 8 , 4).getInt(),
 						ByteBuffer.wrap(receiveBuffer, 12 , 4).getInt());
 				
-				System.out.println("Request from: " + clientAddr.getHostAddress() + ":" + clientPort);
-				System.out.println("Service Id = " + clientRequest.getServiceId());
-				System.out.println("Facility Id = " + clientRequest.getFacilityId());
-				System.out.println("Request Id = " + clientRequest.getRequestId());
+				window.appendTextLine("Request from: " + clientAddr.getHostAddress() + ":" + clientPort);
+				window.appendText("Service Id = " + clientRequest.getServiceId());
+				window.appendText(", Facility Id = " + clientRequest.getFacilityId());
+				window.appendText(", Request Id = " + clientRequest.getRequestId());
+				window.appendTextLine(", Optional Id = " + clientRequest.getOptionalId());
 				// 2.2 check if service can be served or not
 				int ackCode;
 				RequestMessage message = null;
@@ -80,7 +84,6 @@ public class BookingServer {
 				}
 				// 2.2 * check duplicate and handle request
 				int index = BookingServer.history.searchRequest(clientAddr, clientPort, clientRequest.getRequestId());
-				System.out.println("Search Index " + index);
 				if(index != -1 && BookingServer.sematicsCode == BookingServer.AT_MOST_ONCE) {
 					// handle duplicate
 					System.out.println("Client Duplicate Request: ");
@@ -96,9 +99,18 @@ public class BookingServer {
 				else dataBuffer = rp.serialize();
 				BookingServer.sendPacket = new DatagramPacket(dataBuffer, dataBuffer.length, clientAddr, clientPort);
 				BookingServer.socket.send(BookingServer.sendPacket);
-				
+				switch(ackCode) {
+				case StatusCode.ACKNOWLEDGEMENT:
+					window.appendTextLine("StatusCode = ACKNOWLEDGEMENT");
+					break;
+				case StatusCode.ACKNOWLEDGEMENT_FAILED:
+					window.appendTextLine("StatusCode = ACKNOWLEDGEMENT_FAILED");
+					break;
+				case StatusCode.REQUEST_DUPLICATE:
+					window.appendTextLine("StatusCode = REQUEST_DUPLICATE");
+					break;
+				}
 				if(ackCode != StatusCode.ACKNOWLEDGEMENT) {
-					System.out.println("Out of band request!");
 					BookingServer.printHandlerClosing();
 					continue;
 				}
@@ -113,9 +125,9 @@ public class BookingServer {
 					socket.receive(receivePacket);
 					dataBuffer = receivePacket.getData();
 					startTime = DataPackage.extractTimePoint(dataBuffer, 0);
-					System.out.println("Service Query Availability: ");
-					System.out.println("\tFacility: " + clientRequest.getFacilityId());
-					System.out.println("\tStartTime: " + startTime.toString());
+					window.appendTextLine("Service Query Availability: ");
+					window.appendTextLine("\tFacility: " + clientRequest.getFacilityId());
+					window.appendTextLine("\tStartTime: " + startTime.toString());
 					BookingServer.queryAvailibity(clientRequest.getFacilityId(), startTime);
 					break;
 				case RequestPackage.SERVICE_BOOK: 
@@ -124,10 +136,10 @@ public class BookingServer {
 					dataBuffer = receivePacket.getData();
 					startTime = DataPackage.extractTimePoint(dataBuffer, 0);
 					interval = DataPackage.extractDuration(dataBuffer, 3 * 4);
-					System.out.println("Service Book Request: ");
-					System.out.println("\tStart time: " + startTime.toString());
-					System.out.println("\tDuration: " + interval.toString());
-					System.out.println("Facility id: " + clientRequest.getFacilityId());
+					window.appendTextLine("Service Book Request: ");
+					window.appendTextLine("\tStart time: " + startTime.toString());
+					window.appendTextLine("\tDuration: " + interval.toString());
+					window.appendTextLine("\tFacility id: " + clientRequest.getFacilityId());
 					statusCode = BookingServer.bookRequest(clientRequest.getFacilityId(), startTime, interval, clientAddr, clientPort);
 					if(clientRequest.getFacilityId() >= 0 && clientRequest.getFacilityId() < fList.length)
 						System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
@@ -138,10 +150,9 @@ public class BookingServer {
 					dataBuffer = receivePacket.getData();
 					int confirmationId = clientRequest.getOptionalId();
 					interval = DataPackage.extractDuration(dataBuffer, 0);
-					System.out.println("Service_BookChange: ");
-					System.out.println("ConfirmId: " + confirmationId);
-					System.out.println("Duration:  " + interval.toString());
-					System.out.println();
+					window.appendTextLine("Service Book Change: ");
+					window.appendTextLine("\tConfirmId: " + confirmationId);
+					window.appendTextLine("\tDuration:  " + interval.toString());
 					statusCode = BookingServer.bookChange(clientRequest.getFacilityId(), confirmationId, interval);
 					if(clientRequest.getFacilityId() >= 0 && clientRequest.getFacilityId() < fList.length)
 						System.out.println(fList[clientRequest.getFacilityId()].getBookSchedule());
@@ -151,36 +162,43 @@ public class BookingServer {
 					socket.receive(receivePacket);
 					dataBuffer = receivePacket.getData();
 					interval = DataPackage.extractDuration(dataBuffer, 0);
+					window.appendTextLine("Service Monitor: ");
+					window.appendTextLine("\tFacilityId: " + clientRequest.getFacilityId());
+					window.appendTextLine("\tDuration:  " + interval.toString());
 					BookingServer.monitor(clientRequest.getFacilityId(), 
 							clientAddr, clientPort, interval);
 					break;
 				case RequestPackage.SERVICE_PROGRAM: 
 					// service 5 run a program
-					System.out.println("Before invoking the Service_program");
-					System.out.println("last Service: " + lastService);
-					System.out.println("last Value: " + lastValue);
+					window.appendTextLine("Service Get Quote of The Day:");
+					window.appendTextLine("\t QuoteId: " + clientRequest.getOptionalId());
 					if (clientRequest.getServiceId() == lastService && clientRequest.getOptionalId() ==lastValue){
-						System.out.println("case 1: repeated service and number");
 						runProgram(clientRequest.getOptionalId(), true);
 					}
 					else{
-						System.out.println("case 2: NOT repeated service and number");
 						runProgram(clientRequest.getOptionalId(), false);						
 					}
 					break;
 				case RequestPackage.SERVICE_SPEC: 
 					// get facility names
+					window.appendTextLine("Service Get All Facility Name: ");
 					BookingServer.queryFacilityList();
 					break;
 				case RequestPackage.SERVICE_REMOVE_ALL:
+					window.appendTextLine("Service Remove All Booking Slot: ");
+					window.appendTextLine("\tClient Address: " + clientAddr.getHostAddress());
+					window.appendTextLine("\tClient Port: " + clientPort);
 					BookingServer.removeAllSlots(clientRequest.getFacilityId(), clientAddr, clientPort);
 					break;
 				case RequestPackage.SERVICE_REMOVE_LAST:
+					window.appendTextLine("Service Last Booking Slot: ");
+					window.appendTextLine("\tClient Address: " + clientAddr.getHostAddress());
+					window.appendTextLine("\tClient Port: " + clientPort);
 					BookingServer.removeLastSlot(clientRequest.getFacilityId(), clientAddr, clientPort);
 					break;
 				} } catch (SocketTimeoutException e) {
 					// Timeout: server can't receive data package from client, execution terminates
-					System.out.println("Timeout: can't receive data package");
+					window.appendTextLine("Timeout: Can't Receive Request");
 					BookingServer.printHandlerClosing();
 					continue;
 				} 
@@ -210,9 +228,9 @@ public class BookingServer {
 	}
 	
 	public static void printHandlerClosing() {
-		System.out.println("RequestHandler ends");
-		System.out.println("....................");
-		System.out.println();
+		window.appendTextLine("RequestHandler ends");
+		window.appendTextLine("....................");
+		window.appendTextLine("");
 	}
 	
 	public static void createFacilities() {
@@ -237,10 +255,6 @@ public class BookingServer {
 		} else {
 			nextTime = null;
 		}
-		System.out.println("Availability : " + available);
-		if(nextTime != null)
-			System.out.println(nextTime.toString());
-		else System.out.println("Null NextTime");
 		int statusCode = -1;
 		if(available) statusCode = StatusCode.SUCCESS_AVAILABLE;
 		else 		  statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
@@ -270,11 +284,12 @@ public class BookingServer {
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
 		dataBuffer = replyPackage.serialize(DataPackage.serialize(confirmId));
 		DataPackage.printByteArray(dataBuffer);
+		window.appendTextLine(fList[facilityId].getBookSchedule());
 		return statusCode;
 	}
 	
 	public static int bookChange(
-			int facilityId, int confirmationId, Duration interval) {
+			int facilityId, int confirmationId, Duration interval) throws UnknownHostException {
 		// 1. change for a book record 
 		System.out.println("Start Service 3: Booking Change");
 		int statusCode = -1;
@@ -290,6 +305,7 @@ public class BookingServer {
 		// 2. setup reply data
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
 		dataBuffer = replyPackage.serialize(DataPackage.serialize(confirmId));
+		window.appendTextLine(fList[facilityId].getBookSchedule());
 		return statusCode;
 	}
 	
@@ -316,24 +332,22 @@ public class BookingServer {
 		System.out.println("Start Call back");
 		ArrayList<MonitorClient> monitorList = fList[facilityId].getClientList();
 		if(monitorList.size() > 0) {
-			System.out.println("Monitor - clientlist > 0");
+		
 			ArrayList<BookingSlot> slotList = fList[facilityId].getBookSlots();
 			dataBuffer = DataPackage.serialize(slotList);
-			System.out.println("Monitor - list of booking slots");
+		
 			DataPackage.printByteArray(dataBuffer);
 			for(int i = 0; i < monitorList.size(); i++) {
 				MonitorClient client = monitorList.get(i);
 				InetAddress clientAddr = InetAddress.getByName(client.getClientAddress());
 				int clientPort = client.getClientPort();
-				System.out.println("Monitor - client: " + clientAddr.getHostAddress() + ":" + clientPort);
+				window.appendTextLine("Monitor - client: " + clientAddr.getHostAddress() + ":" + clientPort);
 				BookingServer.sendPacket = new DatagramPacket(
 						dataBuffer, dataBuffer.length,
 						clientAddr, clientPort);
 				BookingServer.socket.send(BookingServer.sendPacket);
 			}
-		} else {
-			System.out.println("Monitor - Client list is empty");
-		}
+		} 
 	}
 	
 	public static int queryFacilityList() throws UnsupportedEncodingException {
@@ -356,7 +370,6 @@ public class BookingServer {
 	
 	public static int runProgram(int input, boolean runAgain) 
 			throws UnsupportedEncodingException {
-		System.out.println("Start Service 6: Quote of the day");
 		String str = "nothing";
 		int statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		if (input>9 ||input<0){
@@ -386,6 +399,7 @@ public class BookingServer {
 		if(facilityId < fList.length && facilityId >= 0) {
 			fList[facilityId].removeAllSlot(clientAddr, clientPort);
 			statusCode = StatusCode.SUCCESS_REMOVE;
+			window.appendTextLine(fList[facilityId].getBookSchedule());
 		} 
 		ReplyPackage rp = new ReplyPackage(statusCode);
 		dataBuffer = rp.serialize();
@@ -400,7 +414,10 @@ public class BookingServer {
 				statusCode = StatusCode.SUCCESS_REMOVE;
 			else
 				statusCode = StatusCode.SUCCESS_EMPTY;
+			window.appendTextLine(fList[facilityId].getBookSchedule());
 		} 
+		ReplyPackage rp = new ReplyPackage(statusCode);
+		dataBuffer = rp.serialize();
 		return statusCode;
 	}
 	
@@ -417,7 +434,10 @@ public class BookingServer {
 		quotes[8] = "Quote of the day: They say marriages are made in Heaven. But so is thunder and lightning.!!!";
 		quotes[9] = "Quote of the day: If you have a secret, people will sit a little bit closer.!!!";
 		return quotes[output];
-
+	}
+	
+	public static void changeSemantics(int code) {
+		BookingServer.sematicsCode = code;
 	}
 
 }

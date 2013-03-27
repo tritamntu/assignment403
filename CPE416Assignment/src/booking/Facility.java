@@ -1,6 +1,7 @@
 package booking;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -139,6 +140,41 @@ public class Facility {
 		return confirmId;
 	}
 	
+	// add method
+	public int addSlotWithoutChangeConfirmId(BookingSlot newSlot) {
+		int index = 0;
+		// find ordering index to add slot
+		while(index < slots.size()) {
+			//System.out.println("index: " + index + ", size = " + slots.size());
+			BookingSlot currentSlot = slots.get(index);
+			if(newSlot.compareTime(currentSlot) <= 0) {
+				break;
+			} else {
+				index++;
+			}
+		}
+		// check violation
+		// before violation: start time of new slot violates end time of previous
+		if(index > 0) {
+			BookingSlot prevSlot = slots.get(index - 1);
+			if(newSlot.compareTime(prevSlot.getEndTime()) < 0) {
+				System.out.println("Time Violation: before");
+				return -1;
+			}
+		}
+		// after violation: end time of new slot violates start time of the next
+		if(index < slots.size()) {
+			BookingSlot currSlot = slots.get(index);
+			if(currSlot.compareTime(newSlot.getEndTime()) < 0) {
+				System.out.println("Time Violation: after");
+				return -1;
+			}
+		}
+		
+		slots.add(index, newSlot);
+		return confirmId;
+	}
+		
 	public BookingSlot removeSlot(int index) {
 		if(this.slots.size() == 0 || this.slots.size() > 0 && index >= this.slots.size())
 			return null;
@@ -203,7 +239,7 @@ public class Facility {
 		return index;
 	}
 	
-	public int bookChange(int confirmId, Duration dr) {
+	public int bookChange(int confirmId, Duration dr) throws UnknownHostException {
 		// return -1 if failed
 		// otherwise return the new confirmation id
 		int index = this.searchBookSlot(confirmId);
@@ -214,7 +250,7 @@ public class Facility {
 		BookingSlot updateSlot = currSlot.getUpdateSlot(dr);
 		int addResult = this.addSlot(updateSlot);
 		if(addResult == -1)
-			this.addSlot(currSlot);
+			this.addSlotWithoutChangeConfirmId(currSlot);
 		return addResult;
 	}
 

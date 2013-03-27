@@ -38,16 +38,21 @@ public class BookingSlot {
 	}
 	
 	public boolean compareClient(InetAddress clientAddr, int clientPort) {
+		if(this.clientAddr == null)
+			System.out.println("Null Client Address");
 		return this.clientAddr.equals(clientAddr) 
 				&& (this.clientPort == clientPort);
 	}
 	// get and set method
 	
 	// get a update slot from this slot
-	public BookingSlot getUpdateSlot(Duration dr) {
+	public BookingSlot getUpdateSlot(Duration dr) 
+			throws UnknownHostException {
 		BookingSlot updateSlot = null;
 		TimePoint updateTP = new TimePoint(this.startTime, dr);
 		updateSlot = new BookingSlot(updateTP, this.interval);
+		updateSlot.setClientAddress(this.clientAddr.getHostAddress());
+		updateSlot.setClientPort(this.clientPort);
 		return updateSlot;
 	}
 	
@@ -102,6 +107,14 @@ public class BookingSlot {
 	
 	public int getClientPort() {
 		return this.clientPort;
+	}
+	
+	public void setClientAddress(String hostAddress) throws UnknownHostException {
+		this.clientAddr = InetAddress.getByName(hostAddress);
+	}
+	
+	public void setClientPort(int port) {
+		this.clientPort = port;
 	}
 	
 }

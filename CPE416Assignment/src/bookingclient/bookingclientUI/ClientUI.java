@@ -46,7 +46,7 @@ public class ClientUI extends JFrame {
         this.add( new JScrollPane( this.textArea ), BorderLayout.CENTER);
         // add button list
         JPanel btnPanel = new JPanel();
-        btnPanel.setLayout(new GridLayout(8,1));
+        btnPanel.setLayout(new GridLayout(9,1));
         for(int i = 0; i < btn.length; i++) {
         	switch(i) {
         	case RequestPackage.SERVICE_QUERY:
@@ -129,6 +129,16 @@ public class ClientUI extends JFrame {
         	}
         	btnPanel.add(btn[i]);
         }
+        JButton changeServerBtn = new JButton("Change Server");
+        changeServerBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				(new ChangeServerForm()).setVisible(true);
+			}
+        	
+        });
+        btnPanel.add(changeServerBtn);
         this.add(btnPanel, BorderLayout.WEST);
         // set property
 		this.setTitle("Client User Interface");
