@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="data.DataPackage" project="CPE416Assignment" 
     file="/CPE416Assignment/src/data/DataPackage.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="242" x="394" y="786"/>    
+    <position height="52" width="242" x="250" y="1078"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="data.ReplyPackage" project="CPE416Assignment" 
     file="/CPE416Assignment/src/data/ReplyPackage.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="121" x="692" y="788"/>    
+    <position height="52" width="121" x="548" y="1080"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="bookingclient.bookingclientUI.MonitorCallForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/MonitorCallForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="182" x="1458" y="356"/>    
+    <position height="52" width="182" x="34" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="bookingclient.bookingclientUI.QueryAvailForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/QueryAvailForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="145" x="1682" y="356"/>    
+    <position height="52" width="145" x="258" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -48,7 +48,7 @@
   </class>  
   <class id="6" language="java" name="data.StatusCode" project="CPE416Assignment" 
     file="/CPE416Assignment/src/data/StatusCode.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="177" x="1194" y="54"/>    
+    <position height="52" width="177" x="306" y="922"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -57,7 +57,7 @@
   </class>  
   <class id="7" language="java" name="data.RequestPackage" project="CPE416Assignment" 
     file="/CPE416Assignment/src/data/RequestPackage.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="153" x="915" y="784"/>    
+    <position height="52" width="153" x="771" y="1076"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -84,7 +84,7 @@
   </class>  
   <class id="10" language="java" name="bookingclient.bookingclientUI.BookRequestForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/BookRequestForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="155" x="1871" y="356"/>    
+    <position height="52" width="155" x="447" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -138,7 +138,7 @@
   </class>  
   <class id="16" language="java" name="bookingclient.bookingclientUI.ClientUI" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/ClientUI.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="145" x="2100" y="61"/>    
+    <position height="52" width="145" x="676" y="1461"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -147,7 +147,7 @@
   </class>  
   <class id="17" language="java" name="bookingclient.bookingclientUI.BookChangeForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/BookChangeForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="176" x="2100" y="356"/>    
+    <position height="52" width="176" x="676" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -157,7 +157,7 @@
   <class id="18" language="java" name="bookingclient.bookingclientUI.ChangeServerForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/ChangeServerForm.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="52" width="155" x="1844" y="62"/>    
+    <position height="52" width="155" x="420" y="1462"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -166,7 +166,7 @@
   </class>  
   <class id="19" language="java" name="bookingclient.bookingclientUI.RemoveLastForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/RemoveLastForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="145" x="2324" y="356"/>    
+    <position height="52" width="145" x="900" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -175,7 +175,7 @@
   </class>  
   <interface id="20" language="java" name="data.Serializable" project="CPE416Assignment" 
     file="/CPE416Assignment/src/data/Serializable.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="114" x="689" y="978"/>    
+    <position height="52" width="114" x="549" y="918"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -184,7 +184,7 @@
   </interface>  
   <class id="21" language="java" name="bookingclient.bookingclientUI.RemoveSlotForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/RemoveSlotForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="145" x="2509" y="356"/>    
+    <position height="52" width="145" x="1085" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
@@ -211,77 +211,82 @@
   </class>  
   <class id="24" language="java" name="bookingclient.bookingclientUI.RunProgramForm" project="CPE416Assignment" 
     file="/CPE416Assignment/src/bookingclient/bookingclientUI/RunProgramForm.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="52" width="145" x="2694" y="356"/>    
+    <position height="52" width="145" x="1270" y="1756"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <association id="25">    
-    <end type="SOURCE" refId="23" navigable="false">      
-      <attribute id="26" name="interval"/>      
-      <multiplicity id="27" minimum="0" maximum="1"/>    
+  <class id="25" language="java" name="bookingclient.BookingClient" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/BookingClient.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="52" width="209" x="643" y="1308"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <association id="26">    
+    <end type="SOURCE" refId="25" navigable="false">      
+      <attribute id="27" name="window"/>      
+      <multiplicity id="28" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="29">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="30" name="interval"/>      
+      <multiplicity id="31" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="28">    
+  <association id="32">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="33" name="monitorList"/>      
+      <multiplicity id="34" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="23" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="35">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="20"/>  
+  </realization>  
+  <association id="36">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="29" name="startTime"/>      
-      <multiplicity id="30" minimum="0" maximum="1"/>    
+      <attribute id="37" name="startTime"/>      
+      <multiplicity id="38" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="31">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="32" name="programForm"/>      
-      <multiplicity id="33" minimum="0" maximum="1"/>    
+  <association id="39">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="40" name="slots"/>      
+      <multiplicity id="41" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="34">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="35" name="request"/>      
-      <multiplicity id="36" minimum="0" maximum="1"/>    
+  <association id="42">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="43" name="interval"/>      
+      <multiplicity id="44" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="37">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="20"/>  
-  </realization>  
-  <association id="38">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="39" name="bookChangeForm"/>      
-      <multiplicity id="40" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="41">    
+  <association id="45">    
     <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="42" name="history"/>      
-      <multiplicity id="43" minimum="0" maximum="1"/>    
+      <attribute id="46" name="fList"/>      
+      <multiplicity id="47" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="13" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="44">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="45" name="queryAvailForm"/>      
-      <multiplicity id="46" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="47">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="20"/>  
-  </realization>  
   <association id="48">    
     <end type="SOURCE" refId="16" navigable="false">      
       <attribute id="49" name="bookRequestForm"/>      
@@ -292,86 +297,90 @@
   </association>  
   <association id="51">    
     <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="52" name="monitorCallForm"/>      
+      <attribute id="52" name="removeLastForm"/>      
       <multiplicity id="53" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="54">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="20"/>  
-  </realization>  
-  <association id="55">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="56" name="fList"/>      
-      <multiplicity id="57" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="58">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="59" name="window"/>      
-      <multiplicity id="60" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="61">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="62" name="interval"/>      
-      <multiplicity id="63" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="64">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="65" name="removeForm"/>      
-      <multiplicity id="66" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="67">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="68" name="requestList"/>      
-      <multiplicity id="69" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="22" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="70">    
-    <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="71" name="monitorList"/>      
-      <multiplicity id="72" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="73">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="74" name="removeLastForm"/>      
-      <multiplicity id="75" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="19" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="76">    
+  <realization id="54">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="20"/>  
+  </realization>  
+  <association id="55">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="77" name="dr"/>      
-      <multiplicity id="78" minimum="0" maximum="1"/>    
+      <attribute id="56" name="dr"/>      
+      <multiplicity id="57" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="79">    
-    <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="80" name="slots"/>      
-      <multiplicity id="81" minimum="0" maximum="2147483647"/>    
+  <realization id="58">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="20"/>  
+  </realization>  
+  <association id="59">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="60" name="requestList"/>      
+      <multiplicity id="61" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="22" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="62">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="63" name="removeForm"/>      
+      <multiplicity id="64" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="65">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="66" name="bookChangeForm"/>      
+      <multiplicity id="67" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="17" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="68">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="69" name="programForm"/>      
+      <multiplicity id="70" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="71">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="72" name="window"/>      
+      <multiplicity id="73" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="74">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="75" name="queryAvailForm"/>      
+      <multiplicity id="76" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="77">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="78" name="monitorCallForm"/>      
+      <multiplicity id="79" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="80">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="81" name="history"/>      
+      <multiplicity id="82" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
