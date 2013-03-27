@@ -36,11 +36,12 @@ public class BookingServer {
 	static byte [] receiveBuffer;
 	static byte [] dataBuffer;
 	static RequestHistory history;
-	static int sematicsCode = BookingServer.AT_MOST_ONCE;
+	static int sematicsCode = BookingServer.AT_LEAST_ONCE;
 	static int lastValue = -1;
 	static int lastService = -1;
 	static ServerUI window;
-	static int lostPercent = 50;
+	static int ackLossRate = 0;
+	static int dataLossRate = 0;
 	
 	public static void main(String [] args) {
 		try {
@@ -95,12 +96,12 @@ public class BookingServer {
 				}
 				// 2.2 * send acknowledgment to client
 				ReplyPackage rp = new ReplyPackage(ackCode);
-				if(ackCode == StatusCode.REQUEST_DUPLICATE) 
+				if(ackCode == StatusCode.REQUEST_DUPLICATE && sematicsCode == BookingServer.AT_MOST_ONCE) 
 					dataBuffer = rp.serialize(message.getDataBuffer());
 				else dataBuffer = rp.serialize();
 				BookingServer.sendPacket = new DatagramPacket(dataBuffer, dataBuffer.length, clientAddr, clientPort);
 				// BookingServer.socket.send(BookingServer.sendPacket);
-				BookingServer.sendWithLoss(50);
+				BookingServer.sendWithLoss(ackLossRate);
 				switch(ackCode) {
 				case StatusCode.ACKNOWLEDGEMENT:
 					window.appendTextLine("StatusCode = ACKNOWLEDGEMENT");
@@ -112,7 +113,9 @@ public class BookingServer {
 					window.appendTextLine("StatusCode = REQUEST_DUPLICATE");
 					break;
 				}
-				if(ackCode != StatusCode.ACKNOWLEDGEMENT) {
+				if(ackCode == StatusCode.ACKNOWLEDGEMENT_FAILED || 
+						(ackCode == StatusCode.REQUEST_DUPLICATE && sematicsCode == BookingServer.AT_MOST_ONCE)) {
+					window.appendTextLine("Request handler is going to end due to Fail Acknoledgment or Request Duplicate");
 					BookingServer.printHandlerClosing();
 					continue;
 				}
@@ -120,6 +123,7 @@ public class BookingServer {
 				TimePoint startTime = null;
 				Duration interval = null;
 				socket.setSoTimeout(800);
+				window.appendTextLine("Receiving Data Package and Execute Handler");
 				try {
 				switch(clientRequest.getServiceId()) {
 				case RequestPackage.SERVICE_QUERY: 
@@ -214,7 +218,7 @@ public class BookingServer {
 						dataBuffer, dataBuffer.length, 
 						clientAddr, clientPort);
 				//BookingServer.socket.send(sendPacket);
-				BookingServer.sendWithLoss(50);
+				BookingServer.sendWithLoss(dataLossRate);
 				// 2.7 callback if a booking slot is changed
 				if(statusCode == StatusCode.SUCCESS_BOOKING
 				|| statusCode == StatusCode.SUCCESS_BOOKING_CHANGE) {
@@ -451,5 +455,13 @@ public class BookingServer {
 		} else {
 			window.appendTextLine("Sending packet was lost by simulation ... :( ");
 		}
+	}
+
+	public static void changeLostRate(int ackRate, int dataRate) {
+		// TODO Auto-generated method stub
+		ackLossRate = ackRate;
+		dataLossRate = dataRate;
+		window.appendTextLine("New Acknowledgment Loss Rate = " + ackLossRate);
+		window.appendTextLine("New Data Loss Rate = " + dataLossRate);
 	}
 }

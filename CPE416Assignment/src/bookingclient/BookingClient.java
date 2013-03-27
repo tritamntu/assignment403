@@ -34,7 +34,7 @@ public class BookingClient {
 		"19", "20", "21", "22", "23"};
 	public static final String[] minList = {"0", "15", "30", "45"};
 	public static final String[] weekDayList = {"0","1","2","3","4","5","6"};
-	public static final int MAX_TIMEOUT = 4;
+	public static final int MAX_TIMEOUT = 8;
 	
 	// global data objects
 	public static String[] facilityName = {};
@@ -55,10 +55,11 @@ public class BookingClient {
 	public static boolean stopMonitor;
 	static int ackTimeoutCount;
 	static int dataTimeoutCount;
-	static int lostPercent = 50;
+	//static int requestLossRate = 0;
+	//static int dataLossRate = 0;
+	
 	public static void main(String [] args) {
 		try {
-
 			BookingClient.init();
 			while(true) {
 				
@@ -105,7 +106,7 @@ public class BookingClient {
 			try {
 				window.appendTextLine(BookingClient.getServiceName(serviceId));
 				// 1. send request package
-				sendRequestPackage(serviceId, facilityId, optionalId, 50);
+				sendRequestPackage(serviceId, facilityId, optionalId, 00);
 				// 2. receive acknowledgment package
 				statusCode = receiveAckPackage();
 				System.out.println("StatusCode " + statusCode + ";");
@@ -117,7 +118,7 @@ public class BookingClient {
 				}
 				// 3. send data package
 				if(statusCode != StatusCode.REQUEST_DUPLICATE) {
-					sendDataPackage(serviceId, tp, dr, 50);
+					sendDataPackage(serviceId, tp, dr, 00);
 				// 4. receive data package if the request is not a duplicate
 					socket.receive(receivePacket);
 					receiveBuffer = receivePacket.getData();

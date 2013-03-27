@@ -248,7 +248,7 @@ public class Facility {
 			return -1;
 		BookingSlot currSlot = this.removeSlot(index);
 		BookingSlot updateSlot = currSlot.getUpdateSlot(dr);
-		int addResult = this.addSlot(updateSlot);
+		int addResult = this.addSlotWithoutChangeConfirmId(updateSlot);
 		if(addResult == -1)
 			this.addSlotWithoutChangeConfirmId(currSlot);
 		return addResult;
