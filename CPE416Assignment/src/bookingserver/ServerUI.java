@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -16,6 +17,8 @@ public class ServerUI extends JFrame{
 
 	JTextArea textArea;
 	JComboBox semanticsCombo;
+	JTextArea ackLossRate;
+	JTextArea dataLossRate;
 	String [] semantics = {"AT_LEAST_ONCE", "AT_MOST_ONCE"};
 	
 	public ServerUI() {
@@ -34,9 +37,17 @@ public class ServerUI extends JFrame{
         
         // add configuration panel
 	    JPanel confPanel = new JPanel();
-	    confPanel.setLayout(new GridLayout(6,1));
+	    confPanel.setLayout(new GridLayout(10,1));
 	    semanticsCombo = new JComboBox(semantics);
 	    confPanel.add(semanticsCombo);
+	    JLabel ackLabel = new JLabel("Ack Loss Rate");
+	    confPanel.add(ackLabel);
+	    ackLossRate = new JTextArea();
+	    confPanel.add(ackLossRate);
+	    JLabel dataLable = new JLabel("Data Loss Rate");
+	    confPanel.add(dataLable);
+	    dataLossRate = new JTextArea();
+	    confPanel.add(dataLossRate);
 	    JButton changeBtn = new JButton("ChangeConfiguration");
 	    changeBtn.addActionListener(new ActionListener() {
 			@Override
@@ -71,7 +82,15 @@ public class ServerUI extends JFrame{
 			semanticCode = BookingServer.AT_MOST_ONCE;
 		}
 		this.appendTextLine("Change semantics code to " + str);
+		int ackRate, dataRate;
+		if(!this.ackLossRate.getText().equals(""))
+			ackRate = Integer.parseInt(this.ackLossRate.getText());
+		else ackRate =0;
+		if(!this.dataLossRate.getText().equals(""))
+			dataRate = Integer.parseInt(this.dataLossRate.getText());
+		else dataRate = 0;
 		BookingServer.changeSemantics(semanticCode);
+		BookingServer.changeLostRate(ackRate, dataRate);
 	}
 	
 	public static void main(String[] args) {

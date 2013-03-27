@@ -53,6 +53,7 @@ public class BookingSlot {
 		updateSlot = new BookingSlot(updateTP, this.interval);
 		updateSlot.setClientAddress(this.clientAddr.getHostAddress());
 		updateSlot.setClientPort(this.clientPort);
+		updateSlot.setConfirmationId(this.confirmationId);
 		return updateSlot;
 	}
 	
