@@ -13,14 +13,14 @@ public class MonitorClient {
 	
 	private String clientAddr;
 	private int clientPort;
-	private Duration interval;
+	private TimePoint endTime;
 	
 	// constructor
-	public MonitorClient(InetAddress clientAddr, int clientPort, Duration interval) 
+	public MonitorClient(InetAddress clientAddr, int clientPort, TimePoint endTime) 
 			throws UnknownHostException {
 		this.clientAddr = clientAddr.getHostName();
 		this.clientPort = clientPort;
-		interval = new Duration(interval.getDay(), interval.getHour(), interval.getMin());
+		this.endTime = new TimePoint(endTime.getDate(), endTime.getHour(), endTime.getMin());
 	}
 	
 	// get text client address
@@ -31,5 +31,12 @@ public class MonitorClient {
 	// get client port
 	public int getClientPort(){
 		return this.clientPort;
+	}
+	
+	public boolean finishMonitor(TimePoint current) {
+		int timeCompare = this.endTime.compareTime(current);
+		if(timeCompare <= 0) {
+			return true;
+		} else return false;
 	}
 }

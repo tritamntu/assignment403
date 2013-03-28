@@ -9,6 +9,8 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 
 import data.DataPackage;
 import data.ReplyPackage;
@@ -42,10 +44,12 @@ public class BookingServer {
 	static ServerUI window;
 	static int ackLossRate = 0;
 	static int dataLossRate = 0;
-	
+	static Date startTime;
+
 	public static void main(String [] args) {
 		try {
 			// 1. initialize Facility and Network Socket
+			startTime = new Date();
 			window = new ServerUI();
 			window.setVisible(true);
 			createFacilities();
@@ -324,7 +328,9 @@ public class BookingServer {
 		// 1. add client to monitor list
 		System.out.println("Start Service 4: Monitor");
 		int statusCode = StatusCode.SUCCESS_ADD_MONITOR;
-		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, interval);
+		// get the current timePoint
+		TimePoint monitorEndTime = new TimePoint(getCurrentTimePoint(), interval);
+		MonitorClient newClient = new MonitorClient(clientAddr, clientPort, monitorEndTime);
 		if(facilityId >= 0 && facilityId < fList.length) {
 			fList[facilityId].addMonitorClient(newClient);
 		} else {
@@ -334,6 +340,15 @@ public class BookingServer {
 		ReplyPackage replyPackage = new ReplyPackage(statusCode);
 		dataBuffer = replyPackage.serialize(null);
 		return statusCode;
+	}
+	
+	public static TimePoint getCurrentTimePoint() {
+		Date currentTime = new Date();
+		long secondDiff = (currentTime.getTime() - startTime.getTime()) / 1000L;
+		int currentDay = (int) (secondDiff / (24 * 3600));
+		int currentHour = (int) (secondDiff - currentDay * 24 * 3600) / (3600);
+		int currentMin = (int) (secondDiff - currentDay * 24 * 3600 - currentHour * 3600) / 60;
+		return new TimePoint(currentDay, currentHour, currentMin);
 	}
 	
 	// service 4 call back monitor
@@ -347,8 +362,17 @@ public class BookingServer {
 			dataBuffer = DataPackage.serialize(slotList);
 		
 			DataPackage.printByteArray(dataBuffer);
-			for(int i = 0; i < monitorList.size(); i++) {
-				MonitorClient client = monitorList.get(i);
+			for(Iterator i = monitorList.iterator(); i.hasNext();) {
+				TimePoint currentTimePoint = getCurrentTimePoint();
+				MonitorClient client = (MonitorClient)i.next();
+				if(client.finishMonitor(currentTimePoint)) {
+					i.remove();
+					window.appendTextLine("Remove " 
+							+ client.getClientAddress() + ":" 
+							+ client.getClientPort() 
+							+ " as monitor interval ends.");
+					continue;
+				}
 				InetAddress clientAddr = InetAddress.getByName(client.getClientAddress());
 				int clientPort = client.getClientPort();
 				window.appendTextLine("Monitor - client: " + clientAddr.getHostAddress() + ":" + clientPort);

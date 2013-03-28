@@ -10,6 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import booking.Duration;
 import bookingclient.BookingClient;
@@ -29,7 +30,7 @@ public class MonitorCallForm extends JFrame{
 	JComboBox fCombo;
 	JComboBox durDayCombo;
 	JComboBox durHourCombo;
-	JComboBox durMinCombo;
+	JTextArea durMinText;
 	int status;
 	
 	public MonitorCallForm() {
@@ -50,14 +51,15 @@ public class MonitorCallForm extends JFrame{
 	    durHourCombo = new JComboBox(BookingClient.hourList);
 	    panel.add(durHourCombo);
 	    panel.add(new JLabel("Duration Min: "));
-	    durMinCombo = new JComboBox(BookingClient.minList);
-	    panel.add(durMinCombo);
+	    durMinText = new JTextArea();
+	    panel.add(durMinText);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
 	    submitBtn.addActionListener(new ActionListener() {
 	           public void actionPerformed(ActionEvent event) {
 	        	   try {
 					getFormValues();
+					frame.dispose();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -91,7 +93,10 @@ public class MonitorCallForm extends JFrame{
 		int fIndex = BookingClient.getFacilityIndex((String)fCombo.getSelectedItem());
 		int drDay = Integer.parseInt((String)durDayCombo.getSelectedItem());
 		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
-		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
+		String str = durMinText.getText();
+		int drMin = 0;
+		if(!str.equals(""))
+			drMin = Integer.parseInt(str);
 		MonitorThread thread = new MonitorThread(fIndex, drDay, drHour, drMin);
 		thread.start();
 	}

@@ -129,6 +129,8 @@ public class BookingClient {
 				if(serviceId == RequestPackage.SERVICE_MONITOR) {
 					// if the service is monitor call back, continue to read data
 					stopMonitor = false;
+					long monitorSecs = dr.getDay() * 24 * 3600 + dr.getHour() * 3600 + dr.getMin() * 60;
+					Date startMonitorTime = new Date();
 					while(!stopMonitor) {
 						socket.setSoTimeout(500);
 						try {
@@ -143,6 +145,12 @@ public class BookingClient {
 								window.appendTextLine(slot.toString());
 							}
 						} catch (SocketTimeoutException e ) {
+							Date currentTime = new Date();
+							long secDiff = (currentTime.getTime() - startMonitorTime.getTime()) / 1000L;
+							if(secDiff >= monitorSecs) {
+								stopMonitor = true;
+								window.appendTextLine("Stop Monitor Process");
+							}
 							continue;
 						}
 					}
@@ -403,4 +411,6 @@ public class BookingClient {
 			window.appendTextLine("Sending packet was lost by simulation ... :( ");
 		}
 	}
+	
+	
 }

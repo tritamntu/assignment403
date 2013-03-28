@@ -10,6 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import data.RequestPackage;
@@ -32,7 +33,7 @@ public class BookChangeForm extends JFrame{
 	JTextField cText;
 	JComboBox durDayCombo;
 	JComboBox durHourCombo;
-	JComboBox durMinCombo;
+	JTextArea durMinText;
 	
 	public BookChangeForm() {
 		// create content panel
@@ -54,8 +55,8 @@ public class BookChangeForm extends JFrame{
 	    durHourCombo = new JComboBox(BookingClient.hourList);
 	    panel.add(durHourCombo);
 	    panel.add(new JLabel("Duration Min: "));
-	    durMinCombo = new JComboBox(BookingClient.minList);
-	    panel.add(durMinCombo);
+	    durMinText = new JTextArea();
+	    panel.add(durMinText);
 	    // add buttons
 	    submitBtn = new JButton("Submit");
 	    panel.add(submitBtn);
@@ -93,7 +94,10 @@ public class BookChangeForm extends JFrame{
 		}
 		int drDay = Integer.parseInt((String)durDayCombo.getSelectedItem());
 		int drHour = Integer.parseInt((String)durHourCombo.getSelectedItem());
-		int drMin = Integer.parseInt((String)durMinCombo.getSelectedItem());
+		String str = durMinText.getText();
+		int drMin = 0;
+		if(!str.equals(""))
+			drMin = Integer.parseInt(str);
 		Duration dr = new Duration(drDay, drHour, drMin);
 		BookingClient.sendRequest(RequestPackage.SERVICE_CHANGE, fIndex, cIndex, null, dr);
 	}
