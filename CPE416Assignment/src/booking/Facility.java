@@ -11,7 +11,7 @@ import java.util.List;
  * Purpose: hold information of a facility
  * Including: ID and description
  * Including: list of booking slots
- * Including: list of clients who monitor this client
+ * Including: list of clients who monitor this facility
  * */
 public class Facility {
 	
