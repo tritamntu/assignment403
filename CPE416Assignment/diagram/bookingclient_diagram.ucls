@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.2" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="bookingclient.BookingClient" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/BookingClient.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="400" y="363"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <package id="2" language="java" name="bookingclient" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-322" y="30"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <class id="3" language="java" name="bookingclient.bookingclientUI.BookRequestForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/BookRequestForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-52" y="1208"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="bookingclient.bookingclientUI.BookChangeForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/BookChangeForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-278" y="1181"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="bookingclient.bookingclientUI.ChangeServerForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/ChangeServerForm.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1109" y="1147"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="bookingclient.bookingclientUI.RemoveLastForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/RemoveLastForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="379" y="1136"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="bookingclient.bookingclientUI.MonitorCallForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/MonitorCallForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="175" y="1208"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="bookingclient.bookingclientUI.RemoveSlotForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/RemoveSlotForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="564" y="1136"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="bookingclient.bookingclientUI.RunProgramForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/RunProgramForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="750" y="1136"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="bookingclient.bookingclientUI.QueryAvailForm" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/QueryAvailForm.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="937" y="1181"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="bookingclient.bookingclientUI.MonitorThread" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/MonitorThread.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="388" y="1347"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="bookingclient.bookingclientUI.ClientUI" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI/ClientUI.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="397" y="908"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <package id="13" language="java" name="bookingclient.bookingclientUI" project="CPE416Assignment" 
+    file="/CPE416Assignment/src/bookingclient/bookingclientUI" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-176" y="813"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <association id="14">    
+    <bendpoint x="566" y="1021"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="15" name="removeForm"/>      
+      <multiplicity id="16" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="17">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="18" name="window"/>      
+      <multiplicity id="19" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="20">    
+    <bendpoint x="747" y="1020"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="21" name="programForm"/>      
+      <multiplicity id="22" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="23">    
+    <bendpoint x="-281" y="995"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="24" name="bookChangeForm"/>      
+      <multiplicity id="25" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="26">    
+    <bendpoint x="170" y="1011"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="27" name="monitorCallForm"/>      
+      <multiplicity id="28" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="29">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="30" name="removeLastForm"/>      
+      <multiplicity id="31" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="32">    
+    <bendpoint x="938" y="1002"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="33" name="queryAvailForm"/>      
+      <multiplicity id="34" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="35">    
+    <bendpoint x="-51" y="1004"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="36" name="bookRequestForm"/>      
+      <multiplicity id="37" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
