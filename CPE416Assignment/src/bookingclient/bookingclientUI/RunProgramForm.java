@@ -17,6 +17,10 @@ import bookingclient.BookingClient;
 
 import data.RequestPackage;
 
+/*
+ * Class: RunProgramForm
+ * Purpose: Input Form for Get Quote Service
+ * */
 public class RunProgramForm extends JFrame {
 	
 	JButton submitBtn;

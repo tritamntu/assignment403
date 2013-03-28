@@ -18,6 +18,11 @@ import booking.Duration;
 import booking.TimePoint;
 import bookingclient.BookingClient;
 
+/*
+ * Class: BookChangeForm
+ * Purpose: Input Form for Booking Slot Change service
+ * */
+
 public class BookChangeForm extends JFrame{
 	
 	JButton submitBtn;

@@ -1,7 +1,14 @@
 package booking;
 
+/*
+ * Class: TimePoint
+ * Purpose: measure property of a time point
+ * Including: date, hour, minutes
+ * Values of date are from Monday to Sunday 
+ * */
 public class TimePoint {
 	 
+	// range of date
 	public static final int MONDAY 		= 0;
 	public static final int TUESDAY 	= 1;
 	public static final int WEDNESDAY 	= 2;
@@ -14,16 +21,22 @@ public class TimePoint {
 	private int hour;
 	private int min;
 	
+	// constructor
 	public TimePoint() {
 		this.date = this.hour = this.min = -1;
 	}
 	
+	// constructor
 	public TimePoint(int date, int hour, int min) {
 		this.date = date;
 		this.hour = hour;
 		this.min  = min;
 	}
 	
+	// constructor with time point and interval
+	// return a new time point, which equals parameter time point + parameter duration
+	// out of bound values can be set to:
+	// Monday, 00:00 or Sunday, 24:00
 	public TimePoint(TimePoint tPoint, Duration interval) {
 		this.date = tPoint.getDate() + interval.getDay();
 		this.hour = tPoint.getHour() + interval.getHour();
@@ -53,7 +66,10 @@ public class TimePoint {
 		}
 	}
 	
-	// comparison method
+	// time compare with another time point
+	// return -1 if this time point happens earlier
+	// return  0 if 2 time point happen at the same time
+	// return +1 if this time point happens later
 	public int compareTime(TimePoint tp) {
 		if(this.date < tp.getDate()) 
 			return -1;
@@ -69,19 +85,24 @@ public class TimePoint {
 			return +1;
 		return 0;
 	}
-	// get and set method
+	
+	// get and set methods
+	// get this time point date
 	public int getDate() {
 		return this.date;
 	}
 	
+	// get this time point hour
 	public int getHour() {
 		return this.hour;
 	}
 	
+	// get this time point minute
 	public int getMin() {
 		return this.min;
 	}
-	
+
+	// get text information of this time point
 	public String toString() {
 		String printStr = "";
 		switch(this.date) {
@@ -113,17 +134,5 @@ public class TimePoint {
 		return printStr;
 	}
 	
-	public static void main(String [] args) {
-	TimePoint tp1 = new TimePoint(TimePoint.MONDAY, 14, 59);
-		Duration dr = new Duration(0, 0, 1);
-		TimePoint tp2 = new TimePoint(tp1, dr);
-		System.out.println(tp2.toString());
-		System.out.println(tp1.compareTime(new TimePoint(TimePoint.MONDAY, 15,0)));
-		BookingSlot slot = new BookingSlot(tp1, dr);
-		System.out.println(slot.toString()); 
-
-	}
-	
-
 }
 

@@ -14,6 +14,10 @@ import javax.swing.JPanel;
 import booking.Duration;
 import bookingclient.BookingClient;
 
+/*
+ * Class: MonitorCallForm
+ * Purpose: Input Form for Monitor Callback service
+ * */
 public class MonitorCallForm extends JFrame{
 	
 	private static final int MONITOR = 1;

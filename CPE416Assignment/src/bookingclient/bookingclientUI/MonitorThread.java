@@ -7,6 +7,11 @@ import data.RequestPackage;
 import booking.Duration;
 import bookingclient.BookingClient;
 
+
+/*
+ * Class: MonitorThread
+ * Purpose: Thread for Monitor Service
+ * */
 public class MonitorThread extends Thread{
 	private int facilityId;
 	private Duration dr;

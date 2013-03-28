@@ -16,6 +16,10 @@ import bookingclient.BookingClient;
 
 import data.RequestPackage;
 
+/*
+ * Class: RemoveSlotForm
+ * Purpose: input form for remove all slot service
+ * */
 public class RemoveSlotForm extends JFrame {
 	
 	JButton submitBtn;

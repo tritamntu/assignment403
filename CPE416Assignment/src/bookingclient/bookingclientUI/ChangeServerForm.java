@@ -15,7 +15,10 @@ import javax.swing.JTextField;
 
 import bookingclient.BookingClient;
 
-
+/*
+ * Class: ChangeServerForm
+ * Purpose: Input Form to change server address
+ * */
 public class ChangeServerForm extends JFrame{
 	
 	JButton submitBtn;

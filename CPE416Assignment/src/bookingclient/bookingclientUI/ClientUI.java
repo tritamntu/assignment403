@@ -17,7 +17,12 @@ import bookingclient.BookingClient;
 
 import data.RequestPackage;
 
-
+/*
+ * Class: ClientUI
+ * Purpose: provide user interface to client app
+ * Including: a text area that show messages
+ * Including: panel of service button
+ * */
 public class ClientUI extends JFrame {
 	
 	JTextArea textArea;
@@ -30,10 +35,12 @@ public class ClientUI extends JFrame {
 	RemoveSlotForm removeForm;
 	RemoveLastForm removeLastForm;
 	
+	// constructor
 	public ClientUI() {
 		initUI();
 	}
 
+	// initiate UI
 	public final void initUI() {
 		// create content panel
 		JPanel panel = new JPanel();
@@ -42,11 +49,11 @@ public class ClientUI extends JFrame {
 	    // create text area
 	    this.textArea = new JTextArea();
 	    this.textArea.setEditable(false);
-
         this.add( new JScrollPane( this.textArea ), BorderLayout.CENTER);
         // add button list
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new GridLayout(9,1));
+        // generate action listeners to buttons
         for(int i = 0; i < btn.length; i++) {
         	switch(i) {
         	case RequestPackage.SERVICE_QUERY:
@@ -147,16 +154,18 @@ public class ClientUI extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+	// append new text to the text area
 	public void appendText(String str) {
 		this.textArea.append(str);
 	}
 	
+	// append new line to the text area
 	public void appendTextLine(String str) {
 		this.textArea.append(str + "\n");
 	}
 	
+	// update facility list to the combo boxes
 	public void updateFacilityList() {
-		System.out.println("Update FList");
 		this.queryAvailForm.updateFList();
 		this.bookRequestForm.updateFList();
 		this.monitorCallForm.updateFList();

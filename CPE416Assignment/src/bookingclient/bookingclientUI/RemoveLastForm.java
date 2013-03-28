@@ -15,6 +15,10 @@ import javax.swing.JPanel;
 import bookingclient.BookingClient;
 import data.RequestPackage;
 
+/*
+ * Class: RemoveLastForm
+ * Purpose: Input Form for remove latest slot service
+ * */
 public class RemoveLastForm extends JFrame{
 	
 	JButton submitBtn;

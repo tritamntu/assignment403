@@ -1,6 +1,5 @@
 package data;
 
-
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -10,15 +9,19 @@ import java.util.ArrayList;
 
 import booking.*;
 
+/* Class: DataPackage
+ * Purpose: provide serialize and de-serialize
+ * methods with different parameters
+ * Implement Serializable interface
+ * */
 public class DataPackage implements Serializable {
 
 	@Override
 	public byte[] serialize() {
-		
 		return null;
 	}
 	
-	// serialize method 
+	// serialize method: with timepoint
 	public static byte[] serialize(TimePoint tp) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
@@ -34,7 +37,7 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
-	
+	// serialize method: with timepoint and duration
 	public static byte[] serialize(TimePoint tp, Duration dr) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(6*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
@@ -47,6 +50,7 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
+	// serialize method: with duration
 	public static byte[] serialize(Duration dr) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(3*4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
@@ -56,12 +60,14 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
+	// serialize method: with integer
 	public static byte[] serialize(int confirmId) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(4);
 		byteBuffer.putInt(confirmId);
 		return byteBuffer.array();
 	}
 	
+	// serialize method: with list of booking slots
 	public static byte[] serialize(ArrayList<BookingSlot> slots) {
 		int size = slots.size();
 		ByteBuffer byteBuffer = ByteBuffer.allocate(4 + size * 6 * 4);
@@ -79,11 +85,15 @@ public class DataPackage implements Serializable {
 		return byteBuffer.array();
 	}
 	
-	public static byte[] serialize(String str) throws UnsupportedEncodingException {
+	// serialize method: with String
+	public static byte[] serialize(String str) 
+			throws UnsupportedEncodingException {
 		return str.getBytes(StandardCharsets.US_ASCII);
 	}
 	
-	public static byte[] serialize(String[] strAr) throws UnsupportedEncodingException {
+	// serialize method: with String array
+	public static byte[] serialize(String[] strAr) 
+			throws UnsupportedEncodingException {
 		String str = "";
 		for(int i = 0; i < strAr.length -1; i++) {
 			str += strAr[i] + "\n";
@@ -92,11 +102,12 @@ public class DataPackage implements Serializable {
 		return DataPackage.serialize(str);
 	}
 	
-	// de-serialize methods:
+	// de-serialize method to get Integer
 	public static int extractInt(byte[] buffer, int offset) {
 		return ByteBuffer.wrap(buffer, offset, 4).getInt();
 	}
 	
+	// de-serialize methods to get Timepoint
 	public static TimePoint extractTimePoint(byte[] buffer, int offset) {
 		return new TimePoint(
 				ByteBuffer.wrap(buffer, offset, 4).getInt(), 
@@ -104,6 +115,7 @@ public class DataPackage implements Serializable {
 				ByteBuffer.wrap(buffer, offset + 8, 4).getInt());
 	}
 
+	// de-serialize methods to get a duration
 	public static Duration extractDuration(byte[] buffer, int offset) {
 		return new Duration(
 				ByteBuffer.wrap(buffer, offset, 4).getInt(), 
@@ -111,6 +123,7 @@ public class DataPackage implements Serializable {
 				ByteBuffer.wrap(buffer, offset + 8, 4).getInt());
 	}
 	
+	// de-serialize methods to get a booking slot list
 	public static ArrayList<BookingSlot> extractSlotList(byte[] buffer, int offset) {
 		ArrayList<BookingSlot> slotList = new ArrayList<BookingSlot>();
 		int slotSize = ByteBuffer.wrap(buffer, offset, 4).getInt();
@@ -123,18 +136,21 @@ public class DataPackage implements Serializable {
 		return slotList;
 	}
 	
+	// de-serialize method to get a String list
 	public static String[] extractStringList(byte[] buffer, int offset) {
 		String str = new String(buffer, offset, buffer.length - offset, StandardCharsets.US_ASCII);
 		String [] strAr = str.split("!!!")[0].split("\n");
 		return strAr;
 	}
 	
+	// de-serialize methods to get a String
 	public static String extractString(byte[] buffer, int offset) {
 		String str = new String(buffer, offset, buffer.length - offset, StandardCharsets.US_ASCII);
 		str = str.split("!!!")[0];
 		return str;
 	}
 	
+	// method to print byte array
 	public static void printByteArray(byte [] buffer) {
 		StringBuilder sb = new StringBuilder();
 	    for (byte b : buffer) {
@@ -143,18 +159,4 @@ public class DataPackage implements Serializable {
 	    System.out.println(sb.toString());
 	}
 
-	public static void main(String [] args) {
-		String [] strAr = {"Hello", "World"};
-		try {
-			byte[] buffer = DataPackage.serialize(strAr);
-			DataPackage.printByteArray(buffer);
-			String[] strAr2 = DataPackage.extractStringList(buffer, 0);
-			for(int i = 0; i < strAr2.length; i++) {
-				System.out.println(strAr2[i]);
-			}
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

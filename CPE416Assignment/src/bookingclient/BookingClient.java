@@ -21,6 +21,10 @@ import booking.TimePoint;
 import bookingclient.bookingclientUI.ClientUI;
 import bookingserver.BookingServer;
 
+/*
+ * Class: BookingClient
+ * Purpose: Main Program of Client Side
+ * */
 public class BookingClient {
 
 	// constant data for ClientUI
@@ -55,22 +59,18 @@ public class BookingClient {
 	public static boolean stopMonitor;
 	static int ackTimeoutCount;
 	static int dataTimeoutCount;
-	//static int requestLossRate = 0;
-	//static int dataLossRate = 0;
 	
 	public static void main(String [] args) {
 		try {
 			BookingClient.init();
 			while(true) {
-				
 			}
-			
 		} catch (SocketException | UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
 	
+	// initiate attributes of client program
 	public static void init() 
 			throws SocketException, UnknownHostException {
 		System.out.println("Init");
@@ -80,7 +80,6 @@ public class BookingClient {
 		receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 		socket = new DatagramSocket(clientPort);
 		serverAddr = InetAddress.getByName("127.0.0.1");
-		
 		// initialize data objects
 		confirmIdList = new ArrayList<Integer>();
 		requestId = 1;
@@ -92,14 +91,15 @@ public class BookingClient {
 		window.setVisible(true);
 	}
 	
+	// send a request to server
 	public static int sendRequest(int serviceId, int facilityId, int optionalId, TimePoint tp, Duration dr) 
 			throws SocketException {
-		System.out.println("Serivce Id " + serviceId);
-		
 		Boolean sending = true;
 		dataTimeoutCount = 0;
 		socket.setSoTimeout(800);
 		int statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
+		// condition of sending:
+		// timeout = 800 msec, max number of repeat = MAX_TIMEOUT
 		while(sending && dataTimeoutCount <= BookingClient.MAX_TIMEOUT) {
 			dataTimeoutCount++;
 			statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
@@ -124,8 +124,8 @@ public class BookingClient {
 					receiveBuffer = receivePacket.getData();
 					statusCode = ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
 				}
+				// 5. process data package and get result
 				processDataPackage(serviceId, statusCode);
-				System.out.println("StatusCode " + statusCode + ";");
 				if(serviceId == RequestPackage.SERVICE_MONITOR) {
 					// if the service is monitor call back, continue to read data
 					stopMonitor = false;
@@ -149,12 +149,14 @@ public class BookingClient {
 				}
 				sending = false;
 			} catch (SocketTimeoutException e) {
+				// print time out message
 				window.appendTextLine("Timeout : " + dataTimeoutCount);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		// if the timeout exceeds MAX COUNT, server is not available
 		if(sending) {
 			statusCode = StatusCode.SERVER_NOT_AVAILABLE;
 			window.appendTextLine("Error: Server Not Available, Try Again Later");
@@ -166,15 +168,17 @@ public class BookingClient {
 		return statusCode;
 	}
 	
+	// method to send request package to server
 	public static void sendRequestPackage(int serviceId, int facilityId, int optionalId, int lostPercent) 
 			throws IOException {
 		RequestPackage rp = new RequestPackage(requestId, serviceId, facilityId, optionalId);
 		sendBuffer = rp.serialize();
 		sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, serverAddr, serverPort);
-		//socket.send(sendPacket);
+		// send with a lost percent
 		BookingClient.sendWithLoss(lostPercent);
 	}
 	
+	// method to receive acknowledgment package from server
 	public static int receiveAckPackage() 
 			throws IOException, SocketTimeoutException {
 		socket.receive(receivePacket);
@@ -182,6 +186,7 @@ public class BookingClient {
 		return ByteBuffer.wrap(receiveBuffer, 0, 4).getInt();
 	}
 	
+	// method to send data package to send
 	public static void sendDataPackage(int serviceId, TimePoint tp, Duration dr, int lostPercent) 
 			throws IOException {
 		switch(serviceId) {
@@ -218,6 +223,7 @@ public class BookingClient {
 		}
 	}
 	
+	// method to process data package from server
 	public static void processDataPackage(int serviceId, int statusCode) {
 		int confirmId = 0;
 		TimePoint nextTime = null;
@@ -334,6 +340,7 @@ public class BookingClient {
 		}
 	}
 	
+	// method to get service name from server
 	public static String getServiceName(int serviceId) {
 		String str = "";
 		switch(serviceId) {
@@ -357,6 +364,8 @@ public class BookingClient {
 		return str;
 	}
 	
+	// method to get day index
+	// used for UI classes
 	public static int getDayIndex(String day) {
 		for(int i = 0; i < BookingClient.dayList.length; i++) {
 			if(day.equalsIgnoreCase(BookingClient.dayList[i]))
@@ -365,6 +374,8 @@ public class BookingClient {
 		return -1;
 	}
 	
+	// method to get facility index
+	// used for UI classes
 	public static int getFacilityIndex(String f) {
 		for(int i = 0; i < BookingClient.facilityName.length; i++) {
 			if(f.equalsIgnoreCase(BookingClient.facilityName[i]))
@@ -373,12 +384,17 @@ public class BookingClient {
 		return -1;
 	}
 	
+	// method to change server
+	// used in UI classes
 	public static void changeServer(String ipAddr, int port) throws UnknownHostException {
 		serverAddr = InetAddress.getByName(ipAddr);
 		serverPort = port;
 		window.appendTextLine("Address changed: " + serverAddr.getHostAddress() + ":" + serverPort);
 	}
 	
+	// send package with loss
+	// send package if random number is higher that lostPercent values
+	// else, print a message
 	private static void sendWithLoss(int lostPercent) throws IOException {
 		int randomNum = (int) (100 * Math.random());
 		if(randomNum > lostPercent) {

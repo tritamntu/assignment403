@@ -1,6 +1,7 @@
 package bookingclient.bookingclientUI;
 
 import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -16,7 +17,10 @@ import data.RequestPackage;
 import booking.Duration;
 import booking.TimePoint;
 import bookingclient.BookingClient;
-
+/*
+ * Class: BookRequestForm
+ * Purpose: Input Form for Book Request Service
+ * */
 public class BookRequestForm extends JFrame{
 
 	JButton submitBtn;

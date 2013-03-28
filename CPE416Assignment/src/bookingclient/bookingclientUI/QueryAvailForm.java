@@ -16,6 +16,10 @@ import data.RequestPackage;
 import booking.TimePoint;
 import bookingclient.BookingClient;
 
+/*
+ * Class: QueryAvailForm
+ * Purpose: Input form for Query Availibity
+ * */
 public class QueryAvailForm extends JFrame{
 	
 	JButton submitBtn;

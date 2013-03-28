@@ -13,6 +13,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/*
+ * Class: ServerUI
+ * Purpose: provide user interface to server app
+ * Including: a text area that show messages
+ * Including: configuration panel
+ * */
 public class ServerUI extends JFrame{
 
 	JTextArea textArea;
@@ -21,6 +27,7 @@ public class ServerUI extends JFrame{
 	JTextArea dataLossRate;
 	String [] semantics = {"AT_LEAST_ONCE", "AT_MOST_ONCE"};
 	
+	// contrustor
 	public ServerUI() {
 		initUI();
 	}
@@ -65,14 +72,17 @@ public class ServerUI extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+	// append text to the text area
 	public void appendText(String str) {
 		this.textArea.append(str);
 	}
 	
+	// append new text line to the area
 	public void appendTextLine(String str) {
 		this.textArea.append(str + "\n");
 	}
 	
+	// change values from the configuration panel
 	private void getFormValues() {
 		String str = (String)semanticsCombo.getSelectedItem();
 		int semanticCode;

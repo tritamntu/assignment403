@@ -1,5 +1,9 @@
 package data;
 
+/*
+ * Class StatusCode
+ * Purpose: contain all constant status codes 
+ * that are used in service */
 public class StatusCode {
 	
 	public static final int FACILITY_NOT_FOUND = -1;
@@ -15,4 +19,5 @@ public class StatusCode {
 	public static final int SERVER_NOT_AVAILABLE = 9;
 	public static final int SUCCESS_REMOVE = 10;
 	public static final int SUCCESS_EMPTY = 11;
+	
 }

@@ -3,10 +3,16 @@ package data;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-
-
+/*
+ * Class RequestPackage
+ * Purpose: package that is used to send to server from client
+ * Including: request Id of customer
+ * Including: service Id of the requested service
+ * Including: facility Id
+ * Including: optional Id for some service*/
 public class RequestPackage implements Serializable {
 	
+	// constant list of all service 
 	public static final int SERVICE_SPEC = 0;
 	public static final int SERVICE_QUERY = 1;
 	public static final int SERVICE_BOOK = 2;
@@ -21,6 +27,7 @@ public class RequestPackage implements Serializable {
 	private int facilityId;
 	private int optionalId;
 	
+	// constructor
 	public RequestPackage(int request, int service, int facility, int optional) {
 		this.requestId = request;
 		this.serviceId = service;
@@ -42,51 +49,32 @@ public class RequestPackage implements Serializable {
 	}
 	
 	// get and set method
+	// get request id of this package
 	public int getRequestId() {
 		return this.requestId;
 	}
 	
+	// get service id of this package
 	public int getServiceId() {
 		return this.serviceId;
 	}
 	
+	// get facility id of this package
 	public int getFacilityId() {
 		return this.facilityId;
 	}
 	
+	// get optional id of this package
 	public int getOptionalId() {
 		return this.optionalId;
 	}
 	
+	// get text string information of this package
 	public String toString() {
 		return "Request:" + this.requestId + 
 			 ", Service: " + this.serviceId + 
 			 ", Facility: " + this.facilityId + 
 			 ", OptionalId :" + this.optionalId;
-	}
-	
-	public static void main(String [] args) {
-		int[] data = { 100, 201, 300, 400 };
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);        
-        IntBuffer intBuffer = byteBuffer.asIntBuffer();
-        for(int i = 0; i < data.length; i++) {
-        	intBuffer.put(data[i]);
-        }
-        
-
-        byte[] array = byteBuffer.array();
-
-        ByteBuffer byteDebuf = ByteBuffer.allocate(array.length);
-        byteDebuf.wrap(array);
-        
-        IntBuffer intDebuf = byteDebuf.asIntBuffer();
-        int[] returnData = {1,2,3,4};
-        
-        for(int i = 0; i < 4; i++) {
-	       int extracted = ByteBuffer.wrap(array, i * 4, 4).getInt();
-	       System.out.println(extracted);
-        }
 	}
 	
 }

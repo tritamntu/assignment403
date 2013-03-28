@@ -295,6 +295,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// service 3 book change
 	public static int bookChange(
 			int facilityId, int confirmationId, Duration interval) throws UnknownHostException {
 		// 1. change for a book record 
@@ -316,6 +317,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// service 4 monitor
 	public static int monitor(
 			int facilityId,  InetAddress clientAddr, int clientPort, Duration interval) 
 			throws UnknownHostException {
@@ -334,6 +336,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// service 4 call back monitor
 	public static void callback(int facilityId) 
 			throws IOException {
 		System.out.println("Start Call back");
@@ -352,12 +355,12 @@ public class BookingServer {
 				BookingServer.sendPacket = new DatagramPacket(
 						dataBuffer, dataBuffer.length,
 						clientAddr, clientPort);
-				//BookingServer.socket.send(BookingServer.sendPacket);
 				BookingServer.sendWithLoss(0);
 			}
 		} 
 	}
 	
+	// service 5 query facility List
 	public static int queryFacilityList() throws UnsupportedEncodingException {
 		// 1. create string array of facility names
 		int statusCode = StatusCode.SUCCESS_AVAILABLE;
@@ -376,6 +379,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// service 6 get quotes of the day
 	public static int runProgram(int input, boolean runAgain) 
 			throws UnsupportedEncodingException {
 		String str = "nothing";
@@ -402,6 +406,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// service 7 remove all slots
 	public static int removeAllSlots(int facilityId, InetAddress clientAddr, int clientPort) {
 		int statusCode = StatusCode.FACILITY_NOT_FOUND;
 		if(facilityId < fList.length && facilityId >= 0) {
@@ -414,6 +419,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// service 8 remove the latest slot
 	public static int removeLastSlot(int facilityId, InetAddress clientAddr, int clientPort) {
 		int statusCode = StatusCode.FACILITY_NOT_FOUND;
 		if(facilityId < fList.length && facilityId >= 0) {
@@ -429,6 +435,7 @@ public class BookingServer {
 		return statusCode;
 	}
 	
+	// method get the quotes
 	public static String quote(int output){
 		String[] quotes = new String [10];
 		quotes[0] = "Quote of the day: A day without sunshine is like, you know, night.!!!";
@@ -444,10 +451,13 @@ public class BookingServer {
 		return quotes[output];
 	}
 	
+	// method to change semantics code
+	// used in UI classes
 	public static void changeSemantics(int code) {
 		BookingServer.sematicsCode = code;
 	}
 
+	// method to send with a lost percent
 	private static void sendWithLoss(int lostPercent) throws IOException {
 		int randomNum = (int) (100 * Math.random());
 		if(randomNum > lostPercent) {
@@ -457,6 +467,8 @@ public class BookingServer {
 		}
 	}
 
+	// method to change loss rate
+	// used in UI classes
 	public static void changeLostRate(int ackRate, int dataRate) {
 		// TODO Auto-generated method stub
 		ackLossRate = ackRate;
