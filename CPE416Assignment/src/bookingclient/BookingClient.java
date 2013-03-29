@@ -116,7 +116,7 @@ public class BookingClient {
 					window.appendTextLine("");
 					return statusCode;
 				}
-				// 3. send data package
+				// 3. send data package if the request is not a duplicate
 				if(statusCode != StatusCode.REQUEST_DUPLICATE) {
 					sendDataPackage(serviceId, tp, dr, 00);
 				// 4. receive data package if the request is not a duplicate
@@ -352,6 +352,8 @@ public class BookingClient {
 	public static String getServiceName(int serviceId) {
 		String str = "";
 		switch(serviceId) {
+		case RequestPackage.SERVICE_SPEC:
+			return "Service 0: Query Facility List";
 		case RequestPackage.SERVICE_QUERY:
 			return "Service 1: Query Availability";
 		case RequestPackage.SERVICE_BOOK:
@@ -362,12 +364,10 @@ public class BookingClient {
 			return "Service 4: Monitor Call Back";
 		case RequestPackage.SERVICE_PROGRAM:
 			return "Service 5: Get A Quote";
-		case RequestPackage.SERVICE_SPEC:
-			return "Service 6: Query Facility List";
 		case RequestPackage.SERVICE_REMOVE_ALL:
-			return "Service 7: Remove All Slots";
+			return "Service 6: Remove All Slots";
 		case RequestPackage.SERVICE_REMOVE_LAST:
-			return "Service 8: Remove Latest Booking Slot";
+			return "Service 7: Remove Latest Booking Slot";
 		}
 		return str;
 	}

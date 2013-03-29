@@ -84,7 +84,7 @@ public class ClientUI extends JFrame {
         		});
         		break;
         	case RequestPackage.SERVICE_MONITOR:
-        		btn[i] = new JButton("Monitor Callback");
+        		btn[i] = new JButton("Monitor Facility");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
         				monitorCallForm = new MonitorCallForm();
@@ -125,7 +125,7 @@ public class ClientUI extends JFrame {
          		});
         		break;
         	case RequestPackage.SERVICE_REMOVE_LAST:
-        		btn[i] = new JButton("Remove The Latest Slot");
+        		btn[i] = new JButton("Remove The Last Slot");
         		btn[i].addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
         				removeLastForm = new RemoveLastForm();

@@ -8,7 +8,7 @@ import data.RequestPackage;
 
 /*
  * Class: RequestHistory
- * Purpose: story list successful requests from client*/
+ * Purpose: store list successful requests from client*/
 public class RequestHistory {
 	
 	ArrayList<RequestMessage> requestList;
