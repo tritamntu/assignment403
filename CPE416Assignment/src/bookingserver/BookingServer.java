@@ -126,7 +126,7 @@ public class BookingServer {
 				// 2.3 receive data package from client and execute command
 				TimePoint startTime = null;
 				Duration interval = null;
-				socket.setSoTimeout(800);
+				socket.setSoTimeout(500);
 				window.appendTextLine("Receiving Data Package and Execute Handler");
 				try {
 				switch(clientRequest.getServiceId()) {

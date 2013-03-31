@@ -96,7 +96,7 @@ public class BookingClient {
 			throws SocketException {
 		Boolean sending = true;
 		dataTimeoutCount = 0;
-		socket.setSoTimeout(800);
+		socket.setSoTimeout(750);
 		int statusCode = StatusCode.SUCCESS_NOTAVAILABLE;
 		// condition of sending:
 		// timeout = 800 msec, max number of repeat = MAX_TIMEOUT
